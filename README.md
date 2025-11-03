@@ -1,6 +1,6 @@
 # Trips API
 
-API REST para la gesti�n de viajes.
+API REST para la gestión de viajes.
 
 ## Tecnologías
 
