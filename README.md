@@ -2,7 +2,7 @@
 
 API REST para la gesti�n de viajes.
 
-## Tecnolog�as
+## Tecnologías
 
 - **Node.js** con **Express 5**
 - ES Modules (import/export)
@@ -18,24 +18,24 @@ trips-api/
     env.js          
 ```
 
-## Instalaci�n
+## Instalación
 
 ```bash
 npm install
 ```
 
-## Configuraci�n
+## Configuración
 
 El servidor utiliza las siguientes variables de entorno:
 
 - `PORT`: Puerto en el que se ejecuta el servidor (por defecto: 3000)
 
-Puedes crear un archivo `.env` en la ra�z del proyecto para configurar estas variables.
+Puedes crear un archivo `.env` en la raíz del proyecto para configurar estas variables.
 
-## Ejecuci�n
+## Ejecución
 
 ```bash
 node index.js
 ```
 
-El servidor se iniciar� en `http://localhost:3000` (o el puerto configurado).
+El servidor se iniciará en `http://localhost:3000` (o el puerto configurado).
