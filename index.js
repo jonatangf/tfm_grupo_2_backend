@@ -1,10 +1,21 @@
-import {createApp} from "./app";
-import {env} from "./config/env";
+// Server creation and configuration
+const http = require("node:http");
+const app = require("./src/app");
 
-const app = createApp();
+// Config .env
+require("dotenv").config();
 
-const port = env.port;
+// Server creation
+const server = http.createServer(app);
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+const PORT = process.env.PORT || 3000;
+server.listen(PORT);
+
+// Listeners
+server.on("listening", () => {
+    console.log(`Server listening on port ${PORT}`);
+});
+
+server.on("error", (error) => {
+    console.log(error);
 });
