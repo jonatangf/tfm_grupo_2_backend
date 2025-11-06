@@ -32,8 +32,18 @@ const usersController = {
 
 	create: async (req, res) => {
 		handleValidation(req);
-		const { email, password, display_name } = req.body;
-		const user = await createUser({ email, password, display_name });
+		const user = await createUser({
+			name: req.body.name,
+			lastname: req.body.lastname,
+			email: req.body.email,
+			password: req.body.password,
+			countries_id: req.body.countries_id,
+			photo: req.body.photo,
+			birthdate: req.body.birthdate,
+			description: req.body.description,
+			telephone: req.body.telephone,
+			avg_rating: req.body.avg_rating
+		});
 		res.status(201).json(user);
 	},
 

@@ -20,25 +20,64 @@ const getUser = async (id) => {
 	return user;
 };
 
-const createUser = async ({ email, password, display_name }) => {
-	const existing = await findByEmail(email);
+const pickFields = (payload, keys) => {
+	const fields = {};
+	for (const key of keys) {
+		if (payload[key] !== undefined) {
+			fields[key] = payload[key];
+		}
+	}
+	return fields;
+};
+
+const OPTIONAL_CREATE_FIELDS = [
+	"countries_id",
+	"photo",
+	"birthdate",
+	"description",
+	"telephone",
+	"avg_rating"
+];
+
+const MUTABLE_FIELDS = [
+	"name",
+	"lastname",
+	"email",
+	...OPTIONAL_CREATE_FIELDS
+];
+
+const createUser = async (payload) => {
+	const existing = await findByEmail(payload.email);
 	if (existing) {
 		const err = new Error("Email ya registrado");
 		err.status = 409;
 		throw err;
 	}
-	const password_hash = await hashPassword(password);
-	const id = await create({ email, password_hash, display_name });
-	return { user_id: id, email, display_name, is_active: 1 };
+	const hashedPassword = await hashPassword(payload.password);
+	const id = await create({
+		name: payload.name,
+		lastname: payload.lastname,
+		email: payload.email,
+		password: hashedPassword,
+		...pickFields(payload, OPTIONAL_CREATE_FIELDS)
+	});
+	return getUser(id);
 };
 
 const updateUser = async (id, payload) => {
-	const allowed = {};
-	if (payload.display_name !== undefined) allowed.display_name = payload.display_name;
-	if (payload.is_active !== undefined) allowed.is_active = payload.is_active ? 1 : 0;
+	if (payload.email) {
+		const existing = await findByEmail(payload.email);
+		if (existing && existing.id !== id) {
+			const err = new Error("Email ya registrado");
+			err.status = 409;
+			throw err;
+		}
+	}
+
+	const allowed = pickFields(payload, MUTABLE_FIELDS);
 
 	if (payload.password) {
-		allowed.password_hash = await hashPassword(payload.password);
+		allowed.password = await hashPassword(payload.password);
 	}
 
 	const affected = await update(id, allowed);
