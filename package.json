@@ -17,9 +17,11 @@
   "author": "Mario Girón Martín",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^5.0.0",
+    "express-validator": "^7.3.0",
     "mysql2": "^3.15.3"
   },
   "devDependencies": {
