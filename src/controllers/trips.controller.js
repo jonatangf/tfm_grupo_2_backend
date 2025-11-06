@@ -1,10 +1,10 @@
-const db = require("../config/db");
+const tripsModel = require("../models/trips.model");
 
 // @desc      Get all trips
-// @route     GET /viajes
+// @route     GET /trips
 // @access    Public
-exports.getAllTrips = async (req, res, next) => {
-	const [trips] = await db.query("SELECT * FROM trips");
+exports.getAll = async (req, res, next) => {
+	const trips = await tripsModel.selectAll();
 
 	res.status(200).json(trips);
 };
