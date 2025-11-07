@@ -1,30 +1,70 @@
 const db = require("../config/db");
 
-const selectAll = async () => {
-	const [messages] = await db.query("SELECT * FROM messages");
+const columns = [
+	"id",
+	"message",
+	"users_id",
+	"trips_id",
+	"messages_id",
+	"created_at",
+	"updated_at"
+].join(", ");
 
-	return messages;
+const findAll = async ({ limit = 50, offset = 0 } = {}) => {
+	const [rows] = await db.query(
+		`SELECT ${columns}
+     FROM messages
+     ORDER BY id DESC
+     LIMIT ? OFFSET ?`,
+		[Number(limit), Number(offset)]
+	);
+	return rows;
 };
 
-const selectById = async id => {
-	const [message] = await db.query("SELECT * FROM messages WHERE id=?", [id]);
-
-	return message;
+const findById = async (id) => {
+	const [rows] = await db.query(
+		`SELECT ${columns}
+     FROM messages
+     WHERE id = ?`,
+		[id]
+	);
+	return rows[0] || null;
 };
 
-const create = async () => {
-	// return message;
+const insert = async (fields) => {
+	const entries = Object.entries(fields).filter(([, value]) => value !== undefined);
+	if (!entries.length) {
+		throw new Error("No fields provided to create message");
+	}
+	const cols = entries.map(([key]) => key);
+	const values = entries.map(([, value]) => value);
+	const placeholders = entries.map(() => "?").join(", ");
+	const [res] = await db.query(
+		`INSERT INTO messages (${cols.join(", ")}) VALUES (${placeholders})`,
+		values
+	);
+	return res.insertId;
 };
 
-const updateById = async (id, message) => {
-	// return message;
+const update = async (id, fields) => {
+	const entries = Object.entries(fields).filter(([, value]) => value !== undefined);
+	if (!entries.length) return 0;
+	const sets = entries.map(([key]) => `${key} = ?`);
+	const params = entries.map(([, value]) => value);
+	params.push(id);
+	const [res] = await db.query(`UPDATE messages SET ${sets.join(", ")} WHERE id = ?`, params);
+	return res.affectedRows;
 };
 
-const deleteById = async (id) => {
-	// return message;
+const remove = async (id) => {
+	const [res] = await db.query("DELETE FROM messages WHERE id = ?", [id]);
+	return res.affectedRows;
 };
 
 module.exports = {
-	selectAll,
-	selectById
+	findAll,
+	findById,
+	insert,
+	update,
+	remove
 };
