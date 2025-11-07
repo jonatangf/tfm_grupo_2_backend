@@ -30,6 +30,18 @@ const optionalFields = () => [
 		.toFloat()
 ];
 
+const interestsArrayValidation = () => [
+	body("interests")
+		.optional()
+		.isArray()
+		.withMessage("interests debe ser un array de IDs de intereses"),
+	body("interests.*")
+		.optional()
+		.isInt({ min: 1 })
+		.withMessage("Cada interest debe ser un entero positivo")
+		.toInt()
+];
+
 const sharedBodyValidation = [
 	body("name")
 		.trim()
@@ -45,7 +57,8 @@ const sharedBodyValidation = [
 const createUserValidation = [
 	...sharedBodyValidation,
 	body("password").isLength({ min: 8 }).withMessage("password min 8 chars"),
-	...optionalFields()
+	...optionalFields(),
+	...interestsArrayValidation()
 ];
 
 const updateUserValidation = [
@@ -62,7 +75,8 @@ const updateUserValidation = [
 		.withMessage("lastname max 255 chars"),
 	body("email").optional().isEmail().withMessage("Invalid email").normalizeEmail(),
 	body("password").optional().isLength({ min: 8 }).withMessage("password min 8 chars"),
-	...optionalFields()
+	...optionalFields(),
+	...interestsArrayValidation()
 ];
 
 const idParamValidation = [param("id").isInt({ min: 1 })];

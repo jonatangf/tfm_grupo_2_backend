@@ -34,6 +34,7 @@ const usersController = {
 		handleValidation(req);
 		const user = await createUser({
 			name: req.body.name,
+			interests: req.body.interests,
 			lastname: req.body.lastname,
 			email: req.body.email,
 			password: req.body.password,

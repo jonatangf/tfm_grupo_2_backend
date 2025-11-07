@@ -23,6 +23,18 @@ const findById = async (id) => {
 	return rows[0] || null;
 };
 
+const findByIds = async (ids = []) => {
+	if (!ids.length) return [];
+	const placeholders = ids.map(() => "?").join(", ");
+	const [rows] = await db.query(
+		`SELECT ${columns}
+     FROM interests
+     WHERE id IN (${placeholders})`,
+		ids
+	);
+	return rows;
+};
+
 const findByName = async (name) => {
 	const [rows] = await db.query(
 		`SELECT ${columns}
@@ -58,6 +70,7 @@ const remove = async (id) => {
 module.exports = {
 	findAll,
 	findById,
+	findByIds,
 	findByName,
 	create,
 	update,

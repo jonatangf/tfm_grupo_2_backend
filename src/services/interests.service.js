@@ -6,8 +6,22 @@ const {
 	update,
 	remove
 } = require("../models/interests.model");
+const { findUsersByInterestIds } = require("../models/interestsUsers.model");
 
-const listInterests = async ({ limit, offset }) => findAll({ limit, offset });
+const attachUsersToInterests = async (interests) => {
+	if (!interests.length) return interests;
+	const interestIds = interests.map((interest) => interest.id);
+	const usersMap = await findUsersByInterestIds(interestIds);
+	return interests.map((interest) => ({
+		...interest,
+		users: usersMap.get(interest.id) || []
+	}));
+};
+
+const listInterests = async ({ limit, offset }) => {
+	const interests = await findAll({ limit, offset });
+	return attachUsersToInterests(interests);
+};
 
 const getInterest = async (id) => {
 	const interest = await findById(id);
@@ -16,7 +30,8 @@ const getInterest = async (id) => {
 		err.status = 404;
 		throw err;
 	}
-	return interest;
+	const [withUsers] = await attachUsersToInterests([interest]);
+	return withUsers;
 };
 
 const assertUniqueName = async (name, currentId) => {

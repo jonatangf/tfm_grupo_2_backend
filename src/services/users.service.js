@@ -7,8 +7,26 @@ const {
 	update,
 	removeHard
 } = require("../models/users.model");
+const { findByIds: findInterestsByIds } = require("../models/interests.model");
+const {
+	findInterestsByUserIds,
+	replaceUserInterests
+} = require("../models/interestsUsers.model");
 
-const listUsers = async ({ limit, offset }) => findAll({ limit, offset });
+const attachInterestsToUsers = async (users) => {
+	if (!users.length) return users;
+	const userIds = users.map((user) => user.id);
+	const interestsMap = await findInterestsByUserIds(userIds);
+	return users.map((user) => ({
+		...user,
+		interests: interestsMap.get(user.id) || []
+	}));
+};
+
+const listUsers = async ({ limit, offset }) => {
+	const users = await findAll({ limit, offset });
+	return attachInterestsToUsers(users);
+};
 
 const getUser = async (id) => {
 	const user = await findById(id);
@@ -17,7 +35,8 @@ const getUser = async (id) => {
 		err.status = 404;
 		throw err;
 	}
-	return user;
+	const [withInterests] = await attachInterestsToUsers([user]);
+	return withInterests;
 };
 
 const pickFields = (payload, keys) => {
@@ -46,6 +65,37 @@ const MUTABLE_FIELDS = [
 	...OPTIONAL_CREATE_FIELDS
 ];
 
+const extractInterestIds = (payload) => {
+	if (!Object.prototype.hasOwnProperty.call(payload, "interests")) {
+		return null;
+	}
+	if (!Array.isArray(payload.interests)) {
+		const err = new Error("El campo interests debe ser un array");
+		err.status = 400;
+		throw err;
+	}
+	const unique = [...new Set(payload.interests.map(Number))];
+	return unique.filter(Number.isFinite);
+};
+
+const ensureInterestsExist = async (interestIds) => {
+	if (!interestIds.length) return;
+	const existing = await findInterestsByIds(interestIds);
+	const existingSet = new Set(existing.map((interest) => interest.id));
+	const missing = interestIds.filter((id) => !existingSet.has(id));
+	if (missing.length) {
+		const err = new Error(`Intereses no encontrados: ${missing.join(", ")}`);
+		err.status = 400;
+		throw err;
+	}
+};
+
+const syncUserInterests = async (userId, interestIds) => {
+	const safeIds = interestIds ?? [];
+	await ensureInterestsExist(safeIds);
+	await replaceUserInterests(userId, safeIds);
+};
+
 const createUser = async (payload) => {
 	const existing = await findByEmail(payload.email);
 	if (existing) {
@@ -54,6 +104,7 @@ const createUser = async (payload) => {
 		throw err;
 	}
 	const hashedPassword = await hashPassword(payload.password);
+	const interestIds = extractInterestIds(payload) ?? [];
 	const id = await create({
 		name: payload.name,
 		lastname: payload.lastname,
@@ -61,6 +112,7 @@ const createUser = async (payload) => {
 		password: hashedPassword,
 		...pickFields(payload, OPTIONAL_CREATE_FIELDS)
 	});
+	await syncUserInterests(id, interestIds);
 	return getUser(id);
 };
 
@@ -85,6 +137,10 @@ const updateUser = async (id, payload) => {
 		const err = new Error("Usuario no encontrado o sin cambios");
 		err.status = 404;
 		throw err;
+	}
+	const interestIds = extractInterestIds(payload);
+	if (interestIds !== null) {
+		await syncUserInterests(id, interestIds);
 	}
 	return getUser(id);
 };
