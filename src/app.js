@@ -9,6 +9,7 @@ const meansOfTransportsRoutes = require("./routes/means_of_transports.routes");
 const tripsRoutes = require("./routes/trips.routes");
 const messagesRoutes = require("./routes/messages.routes");
 const reviewsRoutes = require("./routes/reviews.routes");
+const tripsMembersRoutes = require("./routes/trips_members.routes");
 
 const app = express();
 app.use(express.json());
@@ -25,6 +26,7 @@ app.use("/means_of_transports", meansOfTransportsRoutes);
 app.use("/trips", tripsRoutes);
 app.use("/messages", messagesRoutes);
 app.use("/reviews", reviewsRoutes);
+app.use("/trips_members", tripsMembersRoutes);
 
 // 404 handler
 app.use((req, res, next) => {
