@@ -55,67 +55,96 @@ ejemplo, users + interests) y normalizan los mensajes de error en español.
 
 ---
 
-## Endpoints principales
+## Colección Postman
 
-- Todos devuelven JSON.
-- Los listados aceptan `?limit` y `?offset` (por defecto 50 y 0).
-- PUT/PATCH comparten la misma lógica de actualización.
+Toda la documentación de endpoints se mantiene sincronizada en
+`tfm-backend.postman_collection.json`. Para importarla:
 
-| Recurso             | Endpoint base               | Notas                                                                                 |
-|---------------------|-----------------------------|---------------------------------------------------------------------------------------|
-| Countries           | `/countries`                | CRUD completo de países                                                               |
-| Interests           | `/interests`                | CRUD + usuarios relacionados                                                          |
-| Users               | `/users`                    | CRUD + intereses asociados (`interests: number[]`)                                    |
-| Accommodations      | `/accommodations`           | CRUD de alojamientos                                                                  |
-| Means of transports | `/means_of_transports`      | CRUD de medios de transporte                                                          |
-| Trips               | `/trips`                    | CRUD de viajes (destinos, fechas, costos, status)                                     |
-| Trips members       | `/trips_members`            | Gestiona participaciones (`/:usersId/:tripsId`)                                       |
-| Messages            | `/messages`                 | Mensajería referenciando `users_id`, `trips_id` y `messages_id` (hilo)                |
-| Reviews             | `/reviews`                  | CRUD de reseñas (`/:usersId/:tripsId/:reviewedUserId`)                                |
+1. Abrir Postman → `Import`.
+2. Seleccionar el archivo `tfm-backend.postman_collection.json` (raíz del repo).
+3. Usar `http://localhost:3000` como base (o ajustar según tu entorno).
 
-### Ejemplos
+La colección incluye ejemplos de cuerpos válidos y recursos agrupados exactamente como se describe
+a continuación.
 
-**Crear usuario con intereses**
-```http
-POST /users
-{
-  "name": "Lucía",
-  "lastname": "Santos",
-  "email": "lucia@example.com",
-  "password": "secreto123",
-  "interests": [1, 3, 5]
-}
-```
+---
 
-**Agregar participante a un viaje**
-```http
-POST /trips_members
-{
-  "users_id": 45,
-  "trips_id": 7,
-  "status": "pending"
-}
-```
+## Endpoints principales (según la colección Postman)
 
-**Crear review**
-```http
-POST /reviews
-{
-  "users_id": 45,
-  "trips_id": 7,
-  "reviewed_user_id": 12,
-  "review": "Excelente guía",
-  "score": 9
-}
-```
+Base URL por defecto: `http://localhost:3000`. Todos los endpoints responden en JSON y aceptan los
+parámetros de paginación `limit` y `offset` en los listados.
 
-**Actualizar estado de participación**
-```http
-PATCH /trips_members/45/7
-{
-  "status": "accepted"
-}
-```
+### Users (`/users`)
+- `GET /users/` – Lista usuarios.
+- `GET /users/:id` – Obtiene un usuario específico.
+- `POST /users/` – Crea usuario (ver ejemplo en Postman con campos `name`, `lastname`, `email`, `password`, `interests`, etc.).
+- `PATCH /users/:id` – Actualiza parcialmente.
+- `DELETE /users/:id` – Eliminación dura.
+
+### Interests (`/interests`)
+- `GET /interests/` – Lista intereses (incluye usuarios asociados en responses actuales).
+- `GET /interests/:id`
+- `POST /interests/`
+- `PATCH /interests/:id`
+- `DELETE /interests/:id`
+
+### Countries (`/countries`)
+- `GET /countries/`
+- `GET /countries/:id`
+- `POST /countries/`
+- `PATCH /countries/:id`
+- `DELETE /countries/:id`
+
+### Means of transports (`/means_of_transports`)
+- `GET /means_of_transports/`
+- `GET /means_of_transports/:id`
+- `POST /means_of_transports/`
+- `PATCH /means_of_transports/:id`
+- `DELETE /means_of_transports/:id`
+
+### Accommodations (`/accommodations`)
+- `GET /accommodations/`
+- `GET /accommodations/:id`
+- `POST /accommodations/`
+- `PATCH /accommodations/:id`
+- `DELETE /accommodations/:id`
+
+### Trips (`/trips`)
+- `GET /trips/`
+- `GET /trips/:id`
+- `POST /trips/` – Requiere `destiny_place`, `creator_id`, `min_participants` y el resto de campos opcionales.
+- `PATCH /trips/:id`
+- `DELETE /trips/:id`
+
+### Messages (`/messages`)
+- `GET /messages/`
+- `GET /messages/:id`
+- `POST /messages/` – Cuerpo con `message`, `users_id`, `trips_id` y opcional `messages_id`.
+- `PATCH /messages/:id`
+- `DELETE /messages/:id`
+
+### Trips members (`/trips_members`)
+- `GET /trips_members/`
+- `GET /trips_members/:id` (en la colección se referencia con un único ID; en la API real se usan `/:usersId/:tripsId`).
+- `POST /trips_members/`
+- `PATCH /trips_members/:id`
+- `DELETE /trips_members/:id`
+
+### Reviews (`/reviews`)
+- `GET /reviews/`
+- `GET /reviews/:id` (la colección usa un único ID; en la API real se identifican con `/:usersId/:tripsId/:reviewedUserId`).
+- `POST /reviews/`
+- `PATCH /reviews/:id`
+- `DELETE /reviews/:id`
+
+> **Nota:** Algunas rutas de la colección conservan IDs simples para facilitar pruebas rápidas,
+> pero la implementación actual ya maneja claves compuestas (e.g. trips_members y reviews). Ajusta
+> los parámetros según necesites.
+
+### Ejemplos rápidos
+
+Consulta la colección para cuerpos completos por cada request (users, trips, mensajes, etc.). Allí
+encontrarás payloads listos para copiar/pegar.
 
 ---
 
