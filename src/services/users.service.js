@@ -13,6 +13,9 @@ const {
 	replaceUserInterests
 } = require("../models/interestsUsers.model");
 
+const log = (...args) => console.log("[UsersService]", ...args);
+
+
 const attachInterestsToUsers = async (users) => {
 	if (!users.length) return users;
 	const userIds = users.map((user) => user.id);
@@ -24,11 +27,15 @@ const attachInterestsToUsers = async (users) => {
 };
 
 const listUsers = async ({ limit, offset }) => {
+	log("Listing users", { limit, offset });
 	const users = await findAll({ limit, offset });
-	return attachInterestsToUsers(users);
+	const hydrated = await attachInterestsToUsers(users);
+	log("Users listed", { count: hydrated.length });
+	return hydrated;
 };
 
 const getUser = async (id) => {
+	log("Fetching user", { id });
 	const user = await findById(id);
 	if (!user) {
 		const err = new Error("Usuario no encontrado");
@@ -36,6 +43,7 @@ const getUser = async (id) => {
 		throw err;
 	}
 	const [withInterests] = await attachInterestsToUsers([user]);
+	log("User fetched", { id: user.id });
 	return withInterests;
 };
 
@@ -92,11 +100,14 @@ const ensureInterestsExist = async (interestIds) => {
 
 const syncUserInterests = async (userId, interestIds) => {
 	const safeIds = interestIds ?? [];
+	log("Syncing interests", { userId, total: safeIds.length });
 	await ensureInterestsExist(safeIds);
 	await replaceUserInterests(userId, safeIds);
+	log("Interests synced", { userId });
 };
 
 const createUser = async (payload) => {
+	log("Creating user", { email: payload.email });
 	const existing = await findByEmail(payload.email);
 	if (existing) {
 		const err = new Error("Email ya registrado");
@@ -113,10 +124,12 @@ const createUser = async (payload) => {
 		...pickFields(payload, OPTIONAL_CREATE_FIELDS)
 	});
 	await syncUserInterests(id, interestIds);
+	log("User created", { id });
 	return getUser(id);
 };
 
 const updateUser = async (id, payload) => {
+	log("Updating user", { id });
 	if (payload.email) {
 		const existing = await findByEmail(payload.email);
 		if (existing && existing.id !== id) {
@@ -142,16 +155,19 @@ const updateUser = async (id, payload) => {
 	if (interestIds !== null) {
 		await syncUserInterests(id, interestIds);
 	}
+	log("User updated", { id });
 	return getUser(id);
 };
 
 const deleteUser = async (id) => {
+	log("Deleting user", { id });
 	const affected = await removeHard(id);
 	if (!affected) {
 		const err = new Error("Usuario no encontrado");
 		err.status = 404;
 		throw err;
 	}
+	log("User deleted", { id });
 	return { deleted: true };
 };
 

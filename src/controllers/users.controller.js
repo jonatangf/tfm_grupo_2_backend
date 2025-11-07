@@ -7,6 +7,8 @@ const {
 	deleteUser
 } = require("../services/users.service");
 
+const log = (...args) => console.log("[UsersController]", ...args);
+
 const handleValidation = (req) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -20,18 +22,21 @@ const usersController = {
 	list: async (req, res) => {
 		const limit = Number(req.query.limit || 50);
 		const offset = Number(req.query.offset || 0);
+		log("List requested", { limit, offset });
 		const data = await listUsers({ limit, offset });
 		res.json({ data, limit, offset });
 	},
 
 	get: async (req, res) => {
 		const id = Number(req.params.id);
+		log("Get requested", { id });
 		const user = await getUser(id);
 		res.json(user);
 	},
 
 	create: async (req, res) => {
 		handleValidation(req);
+		log("Create requested", { email: req.body.email });
 		const user = await createUser({
 			name: req.body.name,
 			interests: req.body.interests,
@@ -51,12 +56,14 @@ const usersController = {
 	update: async (req, res) => {
 		handleValidation(req);
 		const id = Number(req.params.id);
+		log("Update requested", { id });
 		const user = await updateUser(id, req.body);
 		res.json(user);
 	},
 
 	remove: async (req, res) => {
 		const id = Number(req.params.id);
+		log("Delete requested", { id });
 		const result = await deleteUser(id);
 		res.json(result);
 	}
