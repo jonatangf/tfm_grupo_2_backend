@@ -36,7 +36,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"pablo.nuevo@gmail.com\",\r\n  \"password\": \"aaaaaaaa\",\r\n  \"display_name\": \"Pablo Nuevo\"\r\n}\r\n",
+							"raw": "{\r\n  \"name\": \"María López\",\r\n  \"lastname\": \"Torres\",\r\n  \"email\": \"maria.lopez@gmail.com\",\r\n  \"password\": \"MiPasswordSegura@123\",\r\n  \"countries_id\": 1,\r\n  \"photo\": \"https://example.com/uploads/users/maria.jpg\",\r\n  \"birthdate\": \"1995-09-21\",\r\n  \"description\": \"Aventurera empedernida y amante de los viajes en grupo. Me encanta descubrir nuevos lugares.\",\r\n  \"telephone\": \"+593998765432\",\r\n  \"avg_rating\": 4.50\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -64,7 +64,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/users/2",
+							"raw": "http://localhost:3000/users/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -72,7 +72,7 @@
 							"port": "3000",
 							"path": [
 								"users",
-								"2"
+								"1"
 							]
 						}
 					},
