@@ -36,7 +36,7 @@ const findById = async (id) => {
 };
 
 const findByEmail = async (email) => {
-	const [rows] = await db.query("SELECT id, email FROM users WHERE email = ?", [email]);
+	const [rows] = await db.query(`SELECT ${userColumns} FROM users WHERE email = ?`, [email]);
 	return rows[0] || null;
 };
 

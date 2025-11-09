@@ -2,90 +2,229 @@
 	"info": {
 		"_postman_id": "44d7f481-4678-409c-8076-2d1586eca6ff",
 		"name": "tfm-backend",
+		"description": "API endpoints for TFM Backend - Updated with authentication",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25525652"
 	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	],
 	"item": [
 		{
-			"name": "users",
+			"name": "auth",
 			"item": [
 				{
-					"name": "list",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/users/",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"users",
-								""
-							]
+					"name": "register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Auto-save userId from response",
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.userId) {",
+									"        pm.collectionVariables.set(\"user_id\", jsonData.userId);",
+									"        console.log(\"User ID saved: \" + jsonData.userId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
 						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Javier\",\n  \"lastname\": \"Andrade\",\n  \"email\": \"javier.andrade@viajeros.com\",\n  \"password\": \"ContraseñaFuerte@2025\",\n  \"countries_id\": 1,\n  \"interests\": [2],\n  \"photo\": \"https://example.com/uploads/users/javier.jpg\",\n  \"birthdate\": \"1990-03-15\",\n  \"description\": \"Apasionado por la naturaleza, los viajes de montaña y la fotografía.\",\n  \"telephone\": \"+593987654321\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user. Returns {success: true, userId: 123}"
 					},
 					"response": []
 				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Auto-save token from response",
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.token) {",
+									"        pm.collectionVariables.set(\"auth_token\", jsonData.token);",
+									"        console.log(\"Token saved successfully\");",
+									"    }",
+									"    if (jsonData.userId) {",
+									"        pm.collectionVariables.set(\"user_id\", jsonData.userId);",
+									"        console.log(\"User ID saved: \" + jsonData.userId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"javier.andrade@viajeros.com\",\n  \"password\": \"ContraseñaFuerte@2025\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with email and password. Returns {token: \"...\", userId: 123}"
+					},
+					"response": []
+				}
+			],
+			"description": "Public authentication endpoints (no token required)"
+		},
+		{
+			"name": "users",
+			"item": [
 				{
 					"name": "getById",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/users/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/users/{{user_id}}",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"users",
-								"1"
+								"{{user_id}}"
 							]
-						}
+						},
+						"description": "Get user profile by ID. Requires authentication."
 					},
 					"response": []
 				},
 				{
-					"name": "create",
+					"name": "getScore",
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Javier Andrade\",\r\n  \"lastname\": \"Mora\",\r\n  \"email\": \"javier.andrade@viajeros.com\",\r\n  \"password\": \"ContraseñaFuerte@2025\",\r\n  \"countries_id\": 1,\r\n  \"interests\": [\r\n    2\r\n  ],\r\n  \"photo\": \"https://example.com/uploads/users/javier.jpg\",\r\n  \"birthdate\": \"1990-03-15\",\r\n  \"description\": \"Apasionado por la naturaleza, los viajes de montaña y la fotografía. Me encanta planificar rutas y conocer nuevas culturas.\",\r\n  \"telephone\": \"+593987654321\",\r\n  \"avg_rating\": 4.82\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "http://localhost:3000/users/",
-							"protocol": "http",
+							"raw": "{{base_url}}/users/{{user_id}}/score",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"users",
-								""
+								"{{user_id}}",
+								"score"
 							]
-						}
+						},
+						"description": "Get user's average score. Returns {averageScore: 4.5}"
 					},
 					"response": []
 				},
 				{
 					"name": "update",
 					"request": {
-						"method": "PATCH",
-						"header": [],
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"andres.gallegos@gmail.com\",\r\n    \"display_name\": \"Andrés Gallegos\"\r\n}",
+							"raw": "{\n  \"name\": \"Javier Updated\",\n  \"interests\": [1, 2, 3],\n  \"photo\": \"https://example.com/new-photo.jpg\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -93,41 +232,24 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/users/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/users/{{user_id}}",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"users",
-								"1"
+								"{{user_id}}"
 							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "remove",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/users/1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"users",
-								"1"
-							]
-						}
+						},
+						"description": "Update user profile. Returns {success: true}"
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "User endpoints (require authentication)",
+			"auth": {
+				"type": "inherit"
+			}
 		},
 		{
 			"name": "interests",
@@ -138,12 +260,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/interests/",
-							"protocol": "http",
+							"raw": "{{base_url}}/interests/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"interests",
 								""
@@ -158,12 +278,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/interests/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/interests/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"interests",
 								"3"
@@ -176,10 +294,16 @@
 					"name": "create",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Nuevo\"\r\n}",
+							"raw": "{\n  \"name\": \"Nuevo Interés\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -187,12 +311,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/interests/",
-							"protocol": "http",
+							"raw": "{{base_url}}/interests/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"interests",
 								""
@@ -205,10 +327,16 @@
 					"name": "update",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Actualizado\"\r\n}",
+							"raw": "{\n  \"name\": \"Interés Actualizado\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -216,12 +344,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/interests/2",
-							"protocol": "http",
+							"raw": "{{base_url}}/interests/2",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"interests",
 								"2"
@@ -236,12 +362,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/interests/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/interests/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"interests",
 								"1"
@@ -250,7 +374,10 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"auth": {
+				"type": "inherit"
+			}
 		},
 		{
 			"name": "countries",
@@ -261,12 +388,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/countries/",
-							"protocol": "http",
+							"raw": "{{base_url}}/countries/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"countries",
 								""
@@ -281,12 +406,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/countries/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/countries/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"countries",
 								"3"
@@ -299,10 +422,16 @@
 					"name": "create",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Rusia\"\r\n}",
+							"raw": "{\n  \"name\": \"Rusia\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -310,12 +439,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/countries/",
-							"protocol": "http",
+							"raw": "{{base_url}}/countries/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"countries",
 								""
@@ -328,10 +455,16 @@
 					"name": "update",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Francia\"\r\n}",
+							"raw": "{\n  \"name\": \"Francia\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -339,12 +472,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/countries/2",
-							"protocol": "http",
+							"raw": "{{base_url}}/countries/2",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"countries",
 								"2"
@@ -359,12 +490,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/countries/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/countries/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"countries",
 								"3"
@@ -373,7 +502,10 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"auth": {
+				"type": "inherit"
+			}
 		},
 		{
 			"name": "means_of_transports",
@@ -384,12 +516,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/means_of_transports/",
-							"protocol": "http",
+							"raw": "{{base_url}}/means_of_transports/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"means_of_transports",
 								""
@@ -404,12 +534,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/means_of_transports/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/means_of_transports/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"means_of_transports",
 								"3"
@@ -422,10 +550,16 @@
 					"name": "create",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"buseta\"\r\n}",
+							"raw": "{\n  \"name\": \"Buseta\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -433,12 +567,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/means_of_transports/",
-							"protocol": "http",
+							"raw": "{{base_url}}/means_of_transports/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"means_of_transports",
 								""
@@ -451,10 +583,16 @@
 					"name": "update",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Francia\"\r\n}",
+							"raw": "{\n  \"name\": \"Autocar\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -462,12 +600,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/means_of_transports/2",
-							"protocol": "http",
+							"raw": "{{base_url}}/means_of_transports/2",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"means_of_transports",
 								"2"
@@ -482,12 +618,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/means_of_transports/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/means_of_transports/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"means_of_transports",
 								"3"
@@ -496,7 +630,10 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"auth": {
+				"type": "inherit"
+			}
 		},
 		{
 			"name": "accommodations",
@@ -507,12 +644,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/accommodations/",
-							"protocol": "http",
+							"raw": "{{base_url}}/accommodations/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"accommodations",
 								""
@@ -527,12 +662,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/accommodations/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/accommodations/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"accommodations",
 								"3"
@@ -545,10 +678,16 @@
 					"name": "create",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Rusia\"\r\n}",
+							"raw": "{\n  \"name\": \"Hotel Boutique\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -556,12 +695,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/accommodations/",
-							"protocol": "http",
+							"raw": "{{base_url}}/accommodations/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"accommodations",
 								""
@@ -574,10 +711,16 @@
 					"name": "update",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Francia\"\r\n}",
+							"raw": "{\n  \"name\": \"Resort Todo Incluido\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -585,12 +728,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/accommodations/2",
-							"protocol": "http",
+							"raw": "{{base_url}}/accommodations/2",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"accommodations",
 								"2"
@@ -605,12 +746,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/accommodations/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/accommodations/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"accommodations",
 								"3"
@@ -619,7 +758,10 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"auth": {
+				"type": "inherit"
+			}
 		},
 		{
 			"name": "trips",
@@ -630,12 +772,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/trips/",
-							"protocol": "http",
+							"raw": "{{base_url}}/trips/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"trips",
 								""
@@ -650,12 +790,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/trips/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/trips/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"trips",
 								"3"
@@ -668,10 +806,16 @@
 					"name": "create",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Escapada a Cartagena\",\r\n  \"description\": \"Disfruta de la playa, el casco histórico y la gastronomía caribeña.\",\r\n  \"destiny_country_id\": 3,\r\n  \"destiny_place\": \"Cartagena\",\r\n  \"itinerary\": \"Día 1: Playa Bocagrande. Día 2: Castillo San Felipe. Día 3: Mercado de Bazurto.\",\r\n  \"means_of_transports_id\": 1,\r\n  \"start_date\": \"2025-12-15\",\r\n  \"end_date\": \"2025-12-18\",\r\n  \"creator_id\": 1,\r\n  \"accommodations_id\": 3,\r\n  \"cost_per_person\": 550,\r\n  \"min_participants\": 4,\r\n  \"status\": \"open\"\r\n}\r\n",
+							"raw": "{\n  \"name\": \"Escapada a Cartagena\",\n  \"description\": \"Disfruta de la playa, el casco histórico y la gastronomía caribeña.\",\n  \"destiny_country_id\": 3,\n  \"destiny_place\": \"Cartagena\",\n  \"itinerary\": \"Día 1: Playa Bocagrande. Día 2: Castillo San Felipe. Día 3: Mercado de Bazurto.\",\n  \"means_of_transports_id\": 1,\n  \"start_date\": \"2025-12-15\",\n  \"end_date\": \"2025-12-18\",\n  \"creator_id\": 1,\n  \"accommodations_id\": 3,\n  \"cost_per_person\": 550,\n  \"min_participants\": 4,\n  \"status\": \"open\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -679,12 +823,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/trips/",
-							"protocol": "http",
+							"raw": "{{base_url}}/trips/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"trips",
 								""
@@ -697,10 +839,16 @@
 					"name": "update",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Francia\"\r\n}",
+							"raw": "{\n  \"name\": \"Viaje Actualizado\",\n  \"status\": \"confirmed\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -708,12 +856,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/trips/2",
-							"protocol": "http",
+							"raw": "{{base_url}}/trips/2",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"trips",
 								"2"
@@ -728,12 +874,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/trips/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/trips/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"trips",
 								"3"
@@ -742,7 +886,10 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"auth": {
+				"type": "inherit"
+			}
 		},
 		{
 			"name": "messages",
@@ -753,12 +900,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/messages/",
-							"protocol": "http",
+							"raw": "{{base_url}}/messages/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"messages",
 								""
@@ -773,12 +918,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/messages/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/messages/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"messages",
 								"3"
@@ -791,10 +934,16 @@
 					"name": "create",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"message\": \"Gracias por la invitación, ¿dónde será el punto de encuentro?\",\r\n  \"users_id\": 2,\r\n  \"trips_id\": 1,\r\n  \"messages_id\": 1\r\n}",
+							"raw": "{\n  \"message\": \"Gracias por la invitación, ¿dónde será el punto de encuentro?\",\n  \"users_id\": 2,\n  \"trips_id\": 1,\n  \"messages_id\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -802,12 +951,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/messages/",
-							"protocol": "http",
+							"raw": "{{base_url}}/messages/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"messages",
 								""
@@ -820,10 +967,16 @@
 					"name": "update",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Francia\"\r\n}",
+							"raw": "{\n  \"message\": \"Mensaje actualizado\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -831,12 +984,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/messages/2",
-							"protocol": "http",
+							"raw": "{{base_url}}/messages/2",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"messages",
 								"2"
@@ -851,12 +1002,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/messages/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/messages/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"messages",
 								"3"
@@ -865,7 +1014,10 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"auth": {
+				"type": "inherit"
+			}
 		},
 		{
 			"name": "trips_members",
@@ -876,12 +1028,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/trips_members/",
-							"protocol": "http",
+							"raw": "{{base_url}}/trips_members/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"trips_members",
 								""
@@ -896,12 +1046,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/trips_members/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/trips_members/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"trips_members",
 								"3"
@@ -914,10 +1062,16 @@
 					"name": "create",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"users_id\": 2,\r\n  \"trips_id\": 1,\r\n  \"status\": \"accepted\"\r\n}",
+							"raw": "{\n  \"users_id\": 2,\n  \"trips_id\": 1,\n  \"status\": \"accepted\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -925,12 +1079,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/trips_members/",
-							"protocol": "http",
+							"raw": "{{base_url}}/trips_members/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"trips_members",
 								""
@@ -943,10 +1095,16 @@
 					"name": "update",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Francia\"\r\n}",
+							"raw": "{\n  \"status\": \"rejected\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -954,12 +1112,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/trips_members/2",
-							"protocol": "http",
+							"raw": "{{base_url}}/trips_members/2",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"trips_members",
 								"2"
@@ -974,12 +1130,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/trips_members/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/trips_members/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"trips_members",
 								"3"
@@ -988,7 +1142,10 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"auth": {
+				"type": "inherit"
+			}
 		},
 		{
 			"name": "reviews",
@@ -999,12 +1156,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/reviews/",
-							"protocol": "http",
+							"raw": "{{base_url}}/reviews/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"reviews",
 								""
@@ -1019,12 +1174,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/reviews/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/reviews/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"reviews",
 								"3"
@@ -1037,10 +1190,16 @@
 					"name": "create",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"message\": \"Gracias por la invitación, ¿dónde será el punto de encuentro?\",\r\n  \"users_id\": 2,\r\n  \"trips_id\": 1,\r\n  \"messages_id\": 1\r\n}",
+							"raw": "{\n  \"rating\": 5,\n  \"comment\": \"Excelente viaje, muy bien organizado\",\n  \"reviewer_id\": 2,\n  \"reviewed_id\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1048,12 +1207,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/reviews/",
-							"protocol": "http",
+							"raw": "{{base_url}}/reviews/",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"reviews",
 								""
@@ -1066,10 +1223,16 @@
 					"name": "update",
 					"request": {
 						"method": "PATCH",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Francia\"\r\n}",
+							"raw": "{\n  \"rating\": 4,\n  \"comment\": \"Buen viaje, algunas mejoras posibles\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1077,12 +1240,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/reviews/2",
-							"protocol": "http",
+							"raw": "{{base_url}}/reviews/2",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"reviews",
 								"2"
@@ -1097,12 +1258,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/reviews/3",
-							"protocol": "http",
+							"raw": "{{base_url}}/reviews/3",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"reviews",
 								"3"
@@ -1111,7 +1270,10 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"auth": {
+				"type": "inherit"
+			}
 		}
 	]
 }

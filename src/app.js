@@ -1,32 +1,14 @@
 // Creation and configuration of the Express APP
 const express = require("express");
 const cors = require("cors");
-const countriesRoutes = require("./routes/countries.routes");
-const interestsRoutes = require("./routes/interests.routes");
-const usersRoutes = require("./routes/users.routes");
-const accommodationsRoutes = require("./routes/accommodations.routes");
-const meansOfTransportsRoutes = require("./routes/means_of_transports.routes");
-const tripsRoutes = require("./routes/trips.routes");
-const messagesRoutes = require("./routes/messages.routes");
-const reviewsRoutes = require("./routes/reviews.routes");
-const tripsMembersRoutes = require("./routes/trips_members.routes");
+const apiRoutes = require("./routes/api.routes");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Route configuration
-// Ex.
-// app.use('/api', require('./routes/api.routes'));
-app.use("/countries", countriesRoutes);
-app.use("/interests", interestsRoutes);
-app.use("/users", usersRoutes);
-app.use("/accommodations", accommodationsRoutes);
-app.use("/means_of_transports", meansOfTransportsRoutes);
-app.use("/trips", tripsRoutes);
-app.use("/messages", messagesRoutes);
-app.use("/reviews", reviewsRoutes);
-app.use("/trips_members", tripsMembersRoutes);
+// API routes
+app.use("/api", apiRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

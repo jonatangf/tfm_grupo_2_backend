@@ -1,10 +1,7 @@
 const { validationResult } = require("express-validator");
 const {
-	listUsers,
 	getUser,
-	createUser,
-	updateUser,
-	deleteUser
+	updateUser
 } = require("../services/users.service");
 
 const log = (...args) => console.log("[UsersController]", ...args);
@@ -19,14 +16,6 @@ const handleValidation = (req) => {
 };
 
 const usersController = {
-	list: async (req, res) => {
-		const limit = Number(req.query.limit || 50);
-		const offset = Number(req.query.offset || 0);
-		log("List requested", { limit, offset });
-		const data = await listUsers({ limit, offset });
-		res.json({ data, limit, offset });
-	},
-
 	get: async (req, res) => {
 		const id = Number(req.params.id);
 		log("Get requested", { id });
@@ -34,38 +23,19 @@ const usersController = {
 		res.json(user);
 	},
 
-	create: async (req, res) => {
-		handleValidation(req);
-		log("Create requested", { email: req.body.email });
-		const user = await createUser({
-			name: req.body.name,
-			interests: req.body.interests,
-			lastname: req.body.lastname,
-			email: req.body.email,
-			password: req.body.password,
-			countries_id: req.body.countries_id,
-			photo: req.body.photo,
-			birthdate: req.body.birthdate,
-			description: req.body.description,
-			telephone: req.body.telephone,
-			avg_rating: req.body.avg_rating
-		});
-		res.status(201).json(user);
-	},
-
 	update: async (req, res) => {
 		handleValidation(req);
 		const id = Number(req.params.id);
 		log("Update requested", { id });
-		const user = await updateUser(id, req.body);
-		res.json(user);
+		await updateUser(id, req.body);
+		res.json({ success: true });
 	},
 
-	remove: async (req, res) => {
+	getScore: async (req, res) => {
 		const id = Number(req.params.id);
-		log("Delete requested", { id });
-		const result = await deleteUser(id);
-		res.json(result);
+		log("Get score requested", { id });
+		const user = await getUser(id);
+		res.json({ averageScore: user.avg_rating || 0 });
 	}
 };
 
