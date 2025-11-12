@@ -1,13 +1,8 @@
-const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 const { createUser } = require("../services/users.service");
-const { findByEmail } = require("../models/users.model");
-const { comparePassword } = require("../utils/passwords");
+const { loginUser } = require("../services/auth.service");
 
 const log = (...args) => console.log("[AuthController]", ...args);
-
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "24h";
 
 const handleValidation = (req) => {
 	const errors = validationResult(req);
@@ -16,10 +11,6 @@ const handleValidation = (req) => {
 		err.status = 400;
 		throw err;
 	}
-};
-
-const generateToken = (userId, email) => {
-	return jwt.sign({ userId, email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 };
 
 const authController = {
@@ -53,28 +44,12 @@ const authController = {
 
 		log("Login requested", { email });
 
-		const user = await findByEmail(email);
-		if (!user) {
-			log("Login failed - user not found", { email });
-			const err = new Error("Credenciales inválidas");
-			err.status = 401;
-			throw err;
-		}
+		const { token, userId } = await loginUser(email, password);
 
-		const isValidPassword = await comparePassword(password, user.password);
-		if (!isValidPassword) {
-			log("Login failed - invalid password", { email });
-			const err = new Error("Credenciales inválidas");
-			err.status = 401;
-			throw err;
-		}
-
-		const token = generateToken(user.id, user.email);
-
-		log("Login successful", { id: user.id });
+		log("Login successful", { userId });
 		res.json({
 			token,
-			userId: user.id
+			userId
 		});
 	}
 };
