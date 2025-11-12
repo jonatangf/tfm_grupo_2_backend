@@ -23,26 +23,31 @@ const baseValidations = [
 		.isLength({ min: 1, max: 255 })
 		.withMessage("name debe tener entre 1 y 255 caracteres"),
 	body("description").optional({ nullable: true }).isString().withMessage("description debe ser texto"),
-	optionalIntField("destiny_country_id", "destiny_country_id debe ser un entero positivo"),
-	body("destiny_place")
+	optionalIntField("destinyCountryId", "destinyCountryId debe ser un entero positivo"),
+	body("destinyPlace")
 		.optional()
 		.trim()
 		.isLength({ min: 1, max: 150 })
-		.withMessage("destiny_place debe tener entre 1 y 150 caracteres"),
+		.withMessage("destinyPlace debe tener entre 1 y 150 caracteres"),
+	body("destinyImage")
+		.optional({ nullable: true })
+		.trim()
+		.isLength({ min: 1, max: 500 })
+		.withMessage("destinyImage debe tener entre 1 y 500 caracteres"),
 	body("itinerary").optional({ nullable: true }).isString().withMessage("itinerary debe ser texto"),
-	optionalIntField("means_of_transports_id", "means_of_transports_id debe ser un entero positivo"),
-	optionalDateField("start_date"),
-	optionalDateField("end_date"),
-	optionalIntField("accommodations_id", "accommodations_id debe ser un entero positivo"),
-	body("cost_per_person")
+	optionalIntField("meansOfTransportsId", "meansOfTransportsId debe ser un entero positivo"),
+	optionalDateField("startDate"),
+	optionalDateField("endDate"),
+	optionalIntField("accommodationsId", "accommodationsId debe ser un entero positivo"),
+	body("costPerPerson")
 		.optional({ nullable: true })
 		.isInt({ min: 0 })
-		.withMessage("cost_per_person debe ser un entero >= 0")
+		.withMessage("costPerPerson debe ser un entero >= 0")
 		.toInt(),
-	body("min_participants")
+	body("minParticipants")
 		.optional()
 		.isInt({ min: 1 })
-		.withMessage("min_participants debe ser un entero positivo")
+		.withMessage("minParticipants debe ser un entero positivo")
 		.toInt(),
 	body("status")
 		.optional()
@@ -51,24 +56,24 @@ const baseValidations = [
 ];
 
 const createTripValidation = [
-	body("destiny_place")
+	body("destinyPlace")
 		.trim()
 		.isLength({ min: 1, max: 150 })
-		.withMessage("destiny_place es obligatorio (máx 150 caracteres)"),
-	body("creator_id").isInt({ min: 1 }).withMessage("creator_id debe ser entero positivo").toInt(),
-	body("min_participants")
+		.withMessage("destinyPlace es obligatorio (máx 150 caracteres)"),
+	body("creatorId").isInt({ min: 1 }).withMessage("creatorId debe ser entero positivo").toInt(),
+	body("minParticipants")
 		.isInt({ min: 1 })
-		.withMessage("min_participants debe ser entero positivo")
+		.withMessage("minParticipants debe ser entero positivo")
 		.toInt(),
 	...baseValidations
 ];
 
 const updateTripValidation = [
 	param("id").isInt({ min: 1 }).withMessage("id debe ser entero positivo"),
-	body("creator_id")
+	body("creatorId")
 		.optional()
 		.isInt({ min: 1 })
-		.withMessage("creator_id debe ser entero positivo")
+		.withMessage("creatorId debe ser entero positivo")
 		.toInt(),
 	...baseValidations
 ];

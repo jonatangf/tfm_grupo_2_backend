@@ -6,6 +6,7 @@ const columns = [
 	"description",
 	"destiny_country_id",
 	"destiny_place",
+	"destiny_image",
 	"itinerary",
 	"means_of_transports_id",
 	"start_date",

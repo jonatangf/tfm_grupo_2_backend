@@ -6,6 +6,7 @@ const {
 	updateTrip,
 	deleteTrip
 } = require("../services/trips.service");
+const { keysToCamel, keysToSnake } = require("../utils/caseConverter");
 
 const log = (...args) => console.log("[TripsController]", ...args);
 
@@ -24,29 +25,37 @@ const tripsController = {
 		const offset = Number(req.query.offset || 0);
 		log("List requested", { limit, offset });
 		const data = await listTrips({ limit, offset });
-		res.json({ data, limit, offset });
+		const camelData = keysToCamel(data);
+		res.json({ data: camelData, limit, offset });
 	},
 
 	get: async (req, res) => {
 		const id = Number(req.params.id);
 		log("Get requested", { id });
 		const trip = await getTrip(id);
-		res.json(trip);
+		const camelTrip = keysToCamel(trip);
+		res.json(camelTrip);
 	},
 
 	create: async (req, res) => {
 		handleValidation(req);
-		log("Create requested", { creator_id: req.body.creator_id });
-		const trip = await createTrip(req.body);
-		res.status(201).json(trip);
+		const snakeBody = keysToSnake(req.body);
+		log("Create requested", { creator_id: snakeBody.creator_id });
+		const trip = await createTrip(snakeBody);
+		res.status(201).json({
+			success: true,
+			tripId: trip.id
+		});
 	},
 
 	update: async (req, res) => {
 		handleValidation(req);
 		const id = Number(req.params.id);
+		const snakeBody = keysToSnake(req.body);
 		log("Update requested", { id });
-		const trip = await updateTrip(id, req.body);
-		res.json(trip);
+		const trip = await updateTrip(id, snakeBody);
+		const camelTrip = keysToCamel(trip);
+		res.json(camelTrip);
 	},
 
 	remove: async (req, res) => {
