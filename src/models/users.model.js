@@ -2,11 +2,10 @@ const db = require("../config/db");
 
 const userColumns = [
 	"id",
-	"name",
-	"lastname",
+	"username",
 	"email",
 	"countries_id",
-	"photo",
+	"avatar",
 	"birthdate",
 	"description",
 	"telephone",
@@ -36,7 +35,7 @@ const findById = async (id) => {
 };
 
 const findByEmail = async (email) => {
-	const [rows] = await db.query(`SELECT ${userColumns} FROM users WHERE email = ?`, [email]);
+	const [rows] = await db.query(`SELECT ${userColumns}, password FROM users WHERE email = ?`, [email]);
 	return rows[0] || null;
 };
 

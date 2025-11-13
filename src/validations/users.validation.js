@@ -6,10 +6,10 @@ const optionalFields = () => [
 		.isInt({ min: 1 })
 		.withMessage("countries_id must be a positive integer")
 		.toInt(),
-	body("photo")
+	body("avatar")
 		.optional({ nullable: true })
 		.isLength({ min: 1, max: 255 })
-		.withMessage("photo must be between 1 and 255 chars"),
+		.withMessage("avatar must be between 1 and 255 chars"),
 	body("birthdate")
 		.optional({ nullable: true })
 		.isISO8601()
@@ -43,14 +43,10 @@ const interestsArrayValidation = () => [
 ];
 
 const sharedBodyValidation = [
-	body("name")
+	body("username")
 		.trim()
 		.isLength({ min: 1, max: 50 })
-		.withMessage("name is required (max 50 chars)"),
-	body("lastname")
-		.trim()
-		.isLength({ min: 1, max: 255 })
-		.withMessage("lastname is required (max 255 chars)"),
+		.withMessage("username is required (max 50 chars)"),
 	body("email").isEmail().withMessage("Invalid email").normalizeEmail()
 ];
 
@@ -68,11 +64,6 @@ const updateUserValidation = [
 		.trim()
 		.isLength({ min: 1, max: 50 })
 		.withMessage("name max 50 chars"),
-	body("lastname")
-		.optional()
-		.trim()
-		.isLength({ min: 1, max: 255 })
-		.withMessage("lastname max 255 chars"),
 	body("email").optional().isEmail().withMessage("Invalid email").normalizeEmail(),
 	body("password").optional().isLength({ min: 8 }).withMessage("password min 8 chars"),
 	...optionalFields(),

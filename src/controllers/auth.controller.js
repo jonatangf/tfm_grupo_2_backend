@@ -19,12 +19,11 @@ const authController = {
 		log("Register requested", { email: req.body.email });
 
 		const user = await createUser({
-			name: req.body.name,
-			lastname: req.body.lastname,
+			username: req.body.username,
 			email: req.body.email,
 			password: req.body.password,
 			countries_id: req.body.countries_id,
-			photo: req.body.photo,
+			avatar: req.body.avatar,
 			birthdate: req.body.birthdate,
 			description: req.body.description,
 			telephone: req.body.telephone,

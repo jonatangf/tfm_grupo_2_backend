@@ -59,7 +59,7 @@ const pickFields = (payload, keys) => {
 
 const OPTIONAL_CREATE_FIELDS = [
 	"countries_id",
-	"photo",
+	"avatar",
 	"birthdate",
 	"description",
 	"telephone",
@@ -67,8 +67,7 @@ const OPTIONAL_CREATE_FIELDS = [
 ];
 
 const MUTABLE_FIELDS = [
-	"name",
-	"lastname",
+	"username",
 	"email",
 	...OPTIONAL_CREATE_FIELDS
 ];
@@ -117,8 +116,7 @@ const createUser = async (payload) => {
 	const hashedPassword = await hashPassword(payload.password);
 	const interestIds = extractInterestIds(payload) ?? [];
 	const id = await create({
-		name: payload.name,
-		lastname: payload.lastname,
+		username: payload.username,
 		email: payload.email,
 		password: hashedPassword,
 		...pickFields(payload, OPTIONAL_CREATE_FIELDS)

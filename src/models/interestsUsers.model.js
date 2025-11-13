@@ -25,11 +25,11 @@ const findInterestsByUserIds = async (userIds = []) => {
 const findUsersByInterestIds = async (interestIds = []) => {
 	if (!interestIds.length) return new Map();
 	const [rows] = await db.query(
-		`SELECT iu.interests_id, u.id, u.name, u.lastname
+		`SELECT iu.interests_id, u.id, u.name
      FROM interests_users iu
      INNER JOIN users u ON u.id = iu.users_id
      WHERE iu.interests_id IN (${buildInClause(interestIds)})
-     ORDER BY iu.interests_id, u.lastname, u.name`,
+     ORDER BY iu.interests_id, u.name`,
 		interestIds
 	);
 	const map = new Map();
@@ -39,8 +39,7 @@ const findUsersByInterestIds = async (interestIds = []) => {
 		}
 		map.get(row.interests_id).push({
 			id: row.id,
-			name: row.name,
-			lastname: row.lastname
+			name: row.name			
 		});
 	}
 	return map;
