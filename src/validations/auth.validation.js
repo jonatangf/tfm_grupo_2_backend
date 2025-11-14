@@ -27,11 +27,11 @@ const optionalFields = () => [
 
 const interestsArrayValidation = () => [
 	body("interests")
-		.optional()
+		.optional({ checkFalsy: true })
 		.isArray()
 		.withMessage("interests debe ser un array de IDs de intereses"),
 	body("interests.*")
-		.optional()
+		.if(body("interests").exists())
 		.isInt({ min: 1 })
 		.withMessage("Cada interest debe ser un entero positivo")
 		.toInt()

@@ -18,7 +18,7 @@ const authController = {
 		handleValidation(req);
 		log("Register requested", { email: req.body.email });
 
-		const user = await createUser({
+		const userData = {
 			username: req.body.username,
 			email: req.body.email,
 			password: req.body.password,
@@ -26,9 +26,14 @@ const authController = {
 			avatar: req.body.avatar,
 			birthdate: req.body.birthdate,
 			description: req.body.description,
-			telephone: req.body.telephone,
-			interests: req.body.interests
-		});
+			telephone: req.body.telephone
+		};
+
+		if (req.body.interests !== undefined) {
+			userData.interests = req.body.interests;
+		}
+
+		const user = await createUser(userData);
 
 		log("User registered successfully", { id: user.id });
 		res.status(201).json({
