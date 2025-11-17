@@ -58,7 +58,7 @@ const createUserValidation = [
 ];
 
 const updateUserValidation = [
-	param("id").isInt({ min: 1 }),
+	param("userId").isInt({ min: 1 }),
 	body("name")
 		.optional()
 		.trim()
@@ -70,7 +70,7 @@ const updateUserValidation = [
 	...interestsArrayValidation()
 ];
 
-const idParamValidation = [param("id").isInt({ min: 1 })];
+const idParamValidation = [param("userId").isInt({ min: 1 })];
 
 module.exports = {
 	createUserValidation,

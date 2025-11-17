@@ -4,11 +4,16 @@ const columns = [
 	"users_id",
 	"trips_id",
 	"reviewed_user_id",
+	"title",
 	"review",
 	"score",
 	"created_at",
 	"updated_at"
 ].join(", ");
+
+// Whitelist of allowed fields for insert and update operations
+const ALLOWED_INSERT_FIELDS = ["users_id", "trips_id", "reviewed_user_id", "title", "review", "score"];
+const ALLOWED_UPDATE_FIELDS = ["title", "review", "score"];
 
 const findAll = async ({ limit = 50, offset = 0 } = {}) => {
 	const [rows] = await db.query(
@@ -31,8 +36,23 @@ const findByIds = async (usersId, tripsId, reviewedUserId) => {
 	return rows[0] || null;
 };
 
+const findByReviewedUserId = async (reviewedUserId) => {
+	const [rows] = await db.query(
+		`SELECT r.score, r.title, r.review as comment, u.username as from_user
+     FROM reviews r
+     INNER JOIN users u ON r.users_id = u.id
+     WHERE r.reviewed_user_id = ?
+     ORDER BY r.created_at DESC`,
+		[reviewedUserId]
+	);
+	return rows;
+};
+
 const insert = async (fields) => {
-	const entries = Object.entries(fields).filter(([, value]) => value !== undefined);
+	// Filter fields to only include whitelisted ones
+	const entries = Object.entries(fields)
+		.filter(([key, value]) => ALLOWED_INSERT_FIELDS.includes(key) && value !== undefined);
+
 	if (!entries.length) {
 		throw new Error("No fields provided to create review");
 	}
@@ -51,11 +71,17 @@ const insert = async (fields) => {
 };
 
 const update = async (usersId, tripsId, reviewedUserId, fields) => {
-	const entries = Object.entries(fields).filter(([, value]) => value !== undefined);
+	// Filter fields to only include whitelisted ones
+	const entries = Object.entries(fields)
+		.filter(([key, value]) => ALLOWED_UPDATE_FIELDS.includes(key) && value !== undefined);
+
 	if (!entries.length) return 0;
 	const sets = entries.map(([key]) => `${key} = ?`);
 	const params = entries.map(([, value]) => value);
+
+	sets.push("updated_at = NOW()");
 	params.push(usersId, tripsId, reviewedUserId);
+
 	const [res] = await db.query(
 		`UPDATE reviews
      SET ${sets.join(", ")}
@@ -77,6 +103,7 @@ const remove = async (usersId, tripsId, reviewedUserId) => {
 module.exports = {
 	findAll,
 	findByIds,
+	findByReviewedUserId,
 	insert,
 	update,
 	remove

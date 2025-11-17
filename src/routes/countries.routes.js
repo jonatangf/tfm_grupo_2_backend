@@ -1,6 +1,7 @@
 const express = require("express");
 const countriesController = require("../controllers/countries.controller");
 const { asyncHandler } = require("../middlewares/asyncHandler");
+const authenticateToken = require("../middlewares/authenticateToken");
 const {
 	createCountryValidation,
 	updateCountryValidation,
@@ -9,11 +10,11 @@ const {
 
 const router = express.Router();
 
-router.get("/", asyncHandler(countriesController.list));
-router.get("/:id", idParamValidation, asyncHandler(countriesController.get));
-router.post("/", createCountryValidation, asyncHandler(countriesController.create));
-router.put("/:id", updateCountryValidation, asyncHandler(countriesController.update));
-router.patch("/:id", updateCountryValidation, asyncHandler(countriesController.update));
-router.delete("/:id", idParamValidation, asyncHandler(countriesController.remove));
+router.get("/", authenticateToken, asyncHandler(countriesController.list));
+router.get("/:id", authenticateToken, idParamValidation, asyncHandler(countriesController.get));
+router.post("/", authenticateToken, createCountryValidation, asyncHandler(countriesController.create));
+router.put("/:id", authenticateToken, updateCountryValidation, asyncHandler(countriesController.update));
+router.patch("/:id", authenticateToken, updateCountryValidation, asyncHandler(countriesController.update));
+router.delete("/:id", authenticateToken, idParamValidation, asyncHandler(countriesController.remove));
 
 module.exports = router;

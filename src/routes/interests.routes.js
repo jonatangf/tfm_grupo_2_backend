@@ -1,6 +1,7 @@
 const express = require("express");
 const interestsController = require("../controllers/interests.controller");
 const { asyncHandler } = require("../middlewares/asyncHandler");
+const authenticateToken = require("../middlewares/authenticateToken");
 const {
 	createInterestValidation,
 	updateInterestValidation,
@@ -9,11 +10,11 @@ const {
 
 const router = express.Router();
 
-router.get("/", asyncHandler(interestsController.list));
-router.get("/:id", idParamValidation, asyncHandler(interestsController.get));
-router.post("/", createInterestValidation, asyncHandler(interestsController.create));
-router.put("/:id", updateInterestValidation, asyncHandler(interestsController.update));
-router.patch("/:id", updateInterestValidation, asyncHandler(interestsController.update));
-router.delete("/:id", idParamValidation, asyncHandler(interestsController.remove));
+router.get("/", authenticateToken, asyncHandler(interestsController.list));
+router.get("/:id", authenticateToken, idParamValidation, asyncHandler(interestsController.get));
+router.post("/", authenticateToken, createInterestValidation, asyncHandler(interestsController.create));
+router.put("/:id", authenticateToken, updateInterestValidation, asyncHandler(interestsController.update));
+router.patch("/:id", authenticateToken, updateInterestValidation, asyncHandler(interestsController.update));
+router.delete("/:id", authenticateToken, idParamValidation, asyncHandler(interestsController.remove));
 
 module.exports = router;

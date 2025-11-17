@@ -1,16 +1,23 @@
 const express = require("express");
 const usersController = require("../controllers/users.controller");
+const reviewsController = require("../controllers/reviews.controller");
 const { asyncHandler } = require("../middlewares/asyncHandler");
+const authenticateToken = require("../middlewares/authenticateToken");
 const {
 	updateUserValidation,
 	idParamValidation
 } = require("../validations/users.validation");
+const { getUserReviewsValidation } = require("../validations/reviews.validation");
 
 const router = express.Router();
 
-router.get("/:id/score", idParamValidation, asyncHandler(usersController.getScore));
-router.get("/:id", idParamValidation, asyncHandler(usersController.get));
-router.put("/:id", updateUserValidation, asyncHandler(usersController.update));
-router.patch("/:id", updateUserValidation, asyncHandler(usersController.update));
+// Public routes
+router.get("/:userId/reviews", getUserReviewsValidation, asyncHandler(reviewsController.getUserReviewsList));
+router.get("/:userId/score", idParamValidation, asyncHandler(usersController.getScore));
+router.get("/:userId", idParamValidation, asyncHandler(usersController.get));
+
+// Protected routes (require authentication)
+router.put("/:userId", authenticateToken, updateUserValidation, asyncHandler(usersController.update));
+router.patch("/:userId", authenticateToken, updateUserValidation, asyncHandler(usersController.update));
 
 module.exports = router;

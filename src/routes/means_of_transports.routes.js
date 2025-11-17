@@ -1,6 +1,7 @@
 const express = require("express");
 const meansOfTransportsController = require("../controllers/means_of_transports.controller");
 const { asyncHandler } = require("../middlewares/asyncHandler");
+const authenticateToken = require("../middlewares/authenticateToken");
 const {
 	createMeansOfTransportValidation,
 	updateMeansOfTransportValidation,
@@ -9,11 +10,11 @@ const {
 
 const router = express.Router();
 
-router.get("/", asyncHandler(meansOfTransportsController.list));
-router.get("/:id", idParamValidation, asyncHandler(meansOfTransportsController.get));
-router.post("/", createMeansOfTransportValidation, asyncHandler(meansOfTransportsController.create));
-router.put("/:id", updateMeansOfTransportValidation, asyncHandler(meansOfTransportsController.update));
-router.patch("/:id", updateMeansOfTransportValidation, asyncHandler(meansOfTransportsController.update));
-router.delete("/:id", idParamValidation, asyncHandler(meansOfTransportsController.remove));
+router.get("/", authenticateToken, asyncHandler(meansOfTransportsController.list));
+router.get("/:id", authenticateToken, idParamValidation, asyncHandler(meansOfTransportsController.get));
+router.post("/", authenticateToken, createMeansOfTransportValidation, asyncHandler(meansOfTransportsController.create));
+router.put("/:id", authenticateToken, updateMeansOfTransportValidation, asyncHandler(meansOfTransportsController.update));
+router.patch("/:id", authenticateToken, updateMeansOfTransportValidation, asyncHandler(meansOfTransportsController.update));
+router.delete("/:id", authenticateToken, idParamValidation, asyncHandler(meansOfTransportsController.remove));
 
 module.exports = router;

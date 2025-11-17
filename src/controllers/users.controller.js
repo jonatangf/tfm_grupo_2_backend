@@ -17,7 +17,7 @@ const handleValidation = (req) => {
 
 const usersController = {
 	get: async (req, res) => {
-		const id = Number(req.params.id);
+		const id = Number(req.params.userId);
 		log("Get requested", { id });
 		const user = await getUser(id);
 		res.json(user);
@@ -25,14 +25,14 @@ const usersController = {
 
 	update: async (req, res) => {
 		handleValidation(req);
-		const id = Number(req.params.id);
+		const id = Number(req.params.userId);
 		log("Update requested", { id });
 		await updateUser(id, req.body);
 		res.json({ success: true });
 	},
 
 	getScore: async (req, res) => {
-		const id = Number(req.params.id);
+		const id = Number(req.params.userId);
 		log("Get score requested", { id });
 		const user = await getUser(id);
 		res.json({ averageScore: user.avg_rating || 0 });

@@ -1,6 +1,7 @@
 const express = require("express");
 const messagesController = require("../controllers/messages.controller");
 const { asyncHandler } = require("../middlewares/asyncHandler");
+const authenticateToken = require("../middlewares/authenticateToken");
 const {
 	createMessageValidation,
 	updateMessageValidation,
@@ -9,11 +10,11 @@ const {
 
 const router = express.Router();
 
-router.get("/", asyncHandler(messagesController.list));
-router.get("/:id", idParamValidation, asyncHandler(messagesController.get));
-router.post("/", createMessageValidation, asyncHandler(messagesController.create));
-router.put("/:id", updateMessageValidation, asyncHandler(messagesController.update));
-router.patch("/:id", updateMessageValidation, asyncHandler(messagesController.update));
-router.delete("/:id", idParamValidation, asyncHandler(messagesController.remove));
+router.get("/", authenticateToken, asyncHandler(messagesController.list));
+router.get("/:id", authenticateToken, idParamValidation, asyncHandler(messagesController.get));
+router.post("/", authenticateToken, createMessageValidation, asyncHandler(messagesController.create));
+router.put("/:id", authenticateToken, updateMessageValidation, asyncHandler(messagesController.update));
+router.patch("/:id", authenticateToken, updateMessageValidation, asyncHandler(messagesController.update));
+router.delete("/:id", authenticateToken, idParamValidation, asyncHandler(messagesController.remove));
 
 module.exports = router;

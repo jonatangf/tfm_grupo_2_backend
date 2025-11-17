@@ -1,10 +1,10 @@
 const { validationResult } = require("express-validator");
 const {
-	listMembers,
-	getMember,
-	createMember,
-	updateMember,
-	deleteMember
+	createJoinRequest,
+	getTripRequests,
+	acceptRequest,
+	rejectRequest,
+	getTripMembers
 } = require("../services/trips_members.service");
 
 const log = (...args) => console.log("[TripsMembersController]", ...args);
@@ -19,44 +19,58 @@ const handleValidation = (req) => {
 };
 
 const tripsMembersController = {
-	list: async (req, res) => {
-		const limit = Number(req.query.limit || 50);
-		const offset = Number(req.query.offset || 0);
-		log("List requested", { limit, offset });
-		const data = await listMembers({ limit, offset });
-		res.json({ data, limit, offset });
-	},
-
-	get: async (req, res) => {
-		const usersId = Number(req.params.usersId);
-		const tripsId = Number(req.params.tripsId);
-		log("Get requested", { usersId, tripsId });
-		const member = await getMember(usersId, tripsId);
-		res.json(member);
-	},
-
-	create: async (req, res) => {
+	createJoinRequestHandler: async (req, res) => {
 		handleValidation(req);
-		log("Create requested", { users_id: req.body.users_id, trips_id: req.body.trips_id });
-		const member = await createMember(req.body);
-		res.status(201).json(member);
+		const userId = req.user?.userId;
+		if (!userId) {
+			const err = new Error("Usuario no autenticado");
+			err.status = 401;
+			throw err;
+		}
+
+		const tripId = Number(req.params.tripId);
+		log("Join request", { userId, tripId });
+
+		const result = await createJoinRequest(userId, tripId);
+		res.status(201).json(result);
 	},
 
-	update: async (req, res) => {
+	listRequests: async (req, res) => {
 		handleValidation(req);
-		const usersId = Number(req.params.usersId);
-		const tripsId = Number(req.params.tripsId);
-		log("Update requested", { usersId, tripsId });
-		const member = await updateMember(usersId, tripsId, req.body);
-		res.json(member);
+		const tripId = Number(req.params.tripId);
+		log("List requests", { tripId });
+
+		const requests = await getTripRequests(tripId);
+		res.json(requests);
 	},
 
-	remove: async (req, res) => {
-		const usersId = Number(req.params.usersId);
-		const tripsId = Number(req.params.tripsId);
-		log("Delete requested", { usersId, tripsId });
-		const result = await deleteMember(usersId, tripsId);
+	acceptRequestHandler: async (req, res) => {
+		handleValidation(req);
+		const tripId = Number(req.params.tripId);
+		const requestId = Number(req.params.requestId);
+		log("Accept request", { tripId, requestId });
+
+		const result = await acceptRequest(tripId, requestId);
 		res.json(result);
+	},
+
+	rejectRequestHandler: async (req, res) => {
+		handleValidation(req);
+		const tripId = Number(req.params.tripId);
+		const requestId = Number(req.params.requestId);
+		log("Reject request", { tripId, requestId });
+
+		const result = await rejectRequest(tripId, requestId);
+		res.json(result);
+	},
+
+	listMembers: async (req, res) => {
+		handleValidation(req);
+		const tripId = Number(req.params.tripId);
+		log("List members", { tripId });
+
+		const members = await getTripMembers(tripId);
+		res.json(members);
 	}
 };
 

@@ -69,7 +69,7 @@ const createTripValidation = [
 ];
 
 const updateTripValidation = [
-	param("id").isInt({ min: 1 }).withMessage("id debe ser entero positivo"),
+	param("tripId").isInt({ min: 1 }).withMessage("tripId debe ser entero positivo"),
 	body("creatorId")
 		.optional()
 		.isInt({ min: 1 })
@@ -78,7 +78,7 @@ const updateTripValidation = [
 	...baseValidations
 ];
 
-const idParamValidation = [param("id").isInt({ min: 1 }).withMessage("id debe ser entero positivo")];
+const idParamValidation = [param("tripId").isInt({ min: 1 }).withMessage("tripId debe ser entero positivo")];
 
 module.exports = {
 	createTripValidation,

@@ -8,7 +8,7 @@ const log = (...args) => console.log("[CheckTripOwnership]", ...args);
  */
 const checkTripOwnership = async (req, res, next) => {
 	try {
-		const tripId = Number(req.params.id);
+		const tripId = Number(req.params.tripId);
 		const userId = req.user?.userId;
 
 		if (!userId) {

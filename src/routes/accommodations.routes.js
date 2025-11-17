@@ -1,6 +1,7 @@
 const express = require("express");
 const accommodationsController = require("../controllers/accommodations.controller");
 const { asyncHandler } = require("../middlewares/asyncHandler");
+const authenticateToken = require("../middlewares/authenticateToken");
 const {
 	createAccommodationValidation,
 	updateAccommodationValidation,
@@ -9,11 +10,11 @@ const {
 
 const router = express.Router();
 
-router.get("/", asyncHandler(accommodationsController.list));
-router.get("/:id", idParamValidation, asyncHandler(accommodationsController.get));
-router.post("/", createAccommodationValidation, asyncHandler(accommodationsController.create));
-router.put("/:id", updateAccommodationValidation, asyncHandler(accommodationsController.update));
-router.patch("/:id", updateAccommodationValidation, asyncHandler(accommodationsController.update));
-router.delete("/:id", idParamValidation, asyncHandler(accommodationsController.remove));
+router.get("/", authenticateToken, asyncHandler(accommodationsController.list));
+router.get("/:id", authenticateToken, idParamValidation, asyncHandler(accommodationsController.get));
+router.post("/", authenticateToken, createAccommodationValidation, asyncHandler(accommodationsController.create));
+router.put("/:id", authenticateToken, updateAccommodationValidation, asyncHandler(accommodationsController.update));
+router.patch("/:id", authenticateToken, updateAccommodationValidation, asyncHandler(accommodationsController.update));
+router.delete("/:id", authenticateToken, idParamValidation, asyncHandler(accommodationsController.remove));
 
 module.exports = router;

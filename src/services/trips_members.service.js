@@ -1,10 +1,13 @@
 const {
 	findAll,
 	findByIds,
+	findRequestsByTripId,
+	findAcceptedMembersByTripId,
 	insert,
 	update,
 	remove
 } = require("../models/trips_members.model");
+const { findById: findTripById } = require("../models/trips.model");
 
 const STATUS_VALUES = ["pending", "accepted", "rejected"];
 
@@ -84,10 +87,76 @@ const deleteMember = async (usersId, tripsId) => {
 	return { deleted: true };
 };
 
+const createJoinRequest = async (userId, tripId) => {
+	log("Creating join request", { userId, tripId });
+
+	const trip = await findTripById(tripId);
+	if (!trip) {
+		const err = new Error("El viaje no existe");
+		err.status = 404;
+		throw err;
+	}
+
+	const existing = await findByIds(userId, tripId);
+	if (existing) {
+		const err = new Error("Ya has solicitado unirte a este viaje");
+		err.status = 409;
+		throw err;
+	}
+
+	await insert({ users_id: userId, trips_id: tripId, status: "pending" });
+	log("Join request created", { userId, tripId });
+
+	return { success: true, requestId: userId };
+};
+
+const getTripRequests = async (tripId) => {
+	log("Fetching trip requests", { tripId });
+	const requests = await findRequestsByTripId(tripId);
+	log("Trip requests fetched", { count: requests.length });
+	return requests;
+};
+
+const acceptRequest = async (tripId, requestId) => {
+	log("Accepting request", { tripId, requestId });
+	const affected = await update(requestId, tripId, { status: "accepted" });
+	if (!affected) {
+		const err = new Error("Solicitud no encontrada");
+		err.status = 404;
+		throw err;
+	}
+	log("Request accepted", { tripId, requestId });
+	return { success: true };
+};
+
+const rejectRequest = async (tripId, requestId) => {
+	log("Rejecting request", { tripId, requestId });
+	const affected = await update(requestId, tripId, { status: "rejected" });
+	if (!affected) {
+		const err = new Error("Solicitud no encontrada");
+		err.status = 404;
+		throw err;
+	}
+	log("Request rejected", { tripId, requestId });
+	return { success: true };
+};
+
+const getTripMembers = async (tripId) => {
+	log("Fetching trip members", { tripId });
+	const members = await findAcceptedMembersByTripId(tripId);
+	log("Trip members fetched", { count: members.length });
+	return members;
+};
+
 module.exports = {
 	listMembers,
 	getMember,
 	createMember,
 	updateMember,
-	deleteMember
+	deleteMember,
+	createJoinRequest,
+	getTripRequests,
+	acceptRequest,
+	rejectRequest,
+	getTripMembers
 };
