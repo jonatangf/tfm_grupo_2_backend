@@ -20,7 +20,8 @@ app.use((req, res, next) => {
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: err.message });
+  const status = err.status || 500;
+  res.status(status).json({ message: err.message });
 });
 
 module.exports = app;
