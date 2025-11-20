@@ -43,8 +43,8 @@ const registerValidation = [
 		.isLength({ min: 1, max: 50 })
 		.withMessage("username es obligatorio (máx 50 caracteres)"),	
 	body("email")
-		.isEmail()
-		.withMessage("Email inválido")
+		.matches(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+		.withMessage("El email debe tener un formato válido")
 		.normalizeEmail(),
 	body("password")
 		.isLength({ min: 8 })
@@ -55,8 +55,8 @@ const registerValidation = [
 
 const loginValidation = [
 	body("email")
-		.isEmail()
-		.withMessage("Email inválido")
+		.matches(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+		.withMessage("El email debe tener un formato válido")
 		.normalizeEmail(),
 	body("password")
 		.notEmpty()

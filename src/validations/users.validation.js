@@ -47,7 +47,10 @@ const sharedBodyValidation = [
 		.trim()
 		.isLength({ min: 1, max: 50 })
 		.withMessage("username es obligatorio (máx 50 caracteres)"),
-	body("email").isEmail().withMessage("Email inválido").normalizeEmail()
+	body("email")
+		.matches(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+		.withMessage("El email debe tener un formato válido")
+		.normalizeEmail()
 ];
 
 const createUserValidation = [
@@ -64,7 +67,11 @@ const updateUserValidation = [
 		.trim()
 		.isLength({ min: 1, max: 50 })
 		.withMessage("name debe tener máximo 50 caracteres"),
-	body("email").optional().isEmail().withMessage("Email inválido").normalizeEmail(),
+	body("email")
+		.optional()
+		.matches(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+		.withMessage("El email debe tener un formato válido")
+		.normalizeEmail(),
 	body("password").optional().isLength({ min: 8 }).withMessage("password debe tener mínimo 8 caracteres"),
 	...optionalFields(),
 	...interestsArrayValidation()
