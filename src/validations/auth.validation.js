@@ -4,25 +4,25 @@ const optionalFields = () => [
 	body("countries_id")
 		.optional({ nullable: true })
 		.isInt({ min: 1 })
-		.withMessage("countries_id must be a positive integer")
+		.withMessage("countries_id debe ser un entero positivo")
 		.toInt(),
 	body("avatar")
 		.optional({ nullable: true })
 		.isLength({ min: 1, max: 255 })
-		.withMessage("avatar must be between 1 and 255 chars"),
+		.withMessage("avatar debe tener entre 1 y 255 caracteres"),
 	body("birthdate")
 		.optional({ nullable: true })
 		.isISO8601()
-		.withMessage("birthdate must be a valid date")
+		.withMessage("birthdate debe ser una fecha válida")
 		.toDate(),
 	body("description")
 		.optional({ nullable: true })
 		.isString()
-		.withMessage("description must be a text value"),
+		.withMessage("description debe ser un valor de texto"),
 	body("telephone")
 		.optional({ nullable: true })
 		.isLength({ min: 1, max: 20 })
-		.withMessage("telephone must be between 1 and 20 chars")
+		.withMessage("telephone debe tener entre 1 y 20 caracteres")
 ];
 
 const interestsArrayValidation = () => [
@@ -41,14 +41,14 @@ const registerValidation = [
 	body("username")
 		.trim()
 		.isLength({ min: 1, max: 50 })
-		.withMessage("username is required (max 50 chars)"),	
+		.withMessage("username es obligatorio (máx 50 caracteres)"),	
 	body("email")
 		.isEmail()
-		.withMessage("Invalid email")
+		.withMessage("Email inválido")
 		.normalizeEmail(),
 	body("password")
 		.isLength({ min: 8 })
-		.withMessage("password min 8 chars"),
+		.withMessage("password debe tener mínimo 8 caracteres"),
 	...optionalFields(),
 	...interestsArrayValidation()
 ];
@@ -56,11 +56,11 @@ const registerValidation = [
 const loginValidation = [
 	body("email")
 		.isEmail()
-		.withMessage("Invalid email")
+		.withMessage("Email inválido")
 		.normalizeEmail(),
 	body("password")
 		.notEmpty()
-		.withMessage("password is required")
+		.withMessage("password es obligatorio")
 ];
 
 module.exports = {

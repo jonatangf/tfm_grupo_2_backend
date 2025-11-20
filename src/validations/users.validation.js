@@ -4,29 +4,29 @@ const optionalFields = () => [
 	body("countries_id")
 		.optional({ nullable: true })
 		.isInt({ min: 1 })
-		.withMessage("countries_id must be a positive integer")
+		.withMessage("countries_id debe ser un entero positivo")
 		.toInt(),
 	body("avatar")
 		.optional({ nullable: true })
 		.isLength({ min: 1, max: 255 })
-		.withMessage("avatar must be between 1 and 255 chars"),
+		.withMessage("avatar debe tener entre 1 y 255 caracteres"),
 	body("birthdate")
 		.optional({ nullable: true })
 		.isISO8601()
-		.withMessage("birthdate must be a valid date")
+		.withMessage("birthdate debe ser una fecha válida")
 		.toDate(),
 	body("description")
 		.optional({ nullable: true })
 		.isString()
-		.withMessage("description must be a text value"),
+		.withMessage("description debe ser un valor de texto"),
 	body("telephone")
 		.optional({ nullable: true })
 		.isLength({ min: 1, max: 20 })
-		.withMessage("telephone must be between 1 and 20 chars"),
+		.withMessage("telephone debe tener entre 1 y 20 caracteres"),
 	body("avg_rating")
 		.optional({ nullable: true })
 		.isFloat({ min: 0, max: 9.99 })
-		.withMessage("avg_rating must be between 0.00 and 9.99")
+		.withMessage("avg_rating debe estar entre 0.00 y 9.99")
 		.toFloat()
 ];
 
@@ -46,13 +46,13 @@ const sharedBodyValidation = [
 	body("username")
 		.trim()
 		.isLength({ min: 1, max: 50 })
-		.withMessage("username is required (max 50 chars)"),
-	body("email").isEmail().withMessage("Invalid email").normalizeEmail()
+		.withMessage("username es obligatorio (máx 50 caracteres)"),
+	body("email").isEmail().withMessage("Email inválido").normalizeEmail()
 ];
 
 const createUserValidation = [
 	...sharedBodyValidation,
-	body("password").isLength({ min: 8 }).withMessage("password min 8 chars"),
+	body("password").isLength({ min: 8 }).withMessage("password debe tener mínimo 8 caracteres"),
 	...optionalFields(),
 	...interestsArrayValidation()
 ];
@@ -63,9 +63,9 @@ const updateUserValidation = [
 		.optional()
 		.trim()
 		.isLength({ min: 1, max: 50 })
-		.withMessage("name max 50 chars"),
-	body("email").optional().isEmail().withMessage("Invalid email").normalizeEmail(),
-	body("password").optional().isLength({ min: 8 }).withMessage("password min 8 chars"),
+		.withMessage("name debe tener máximo 50 caracteres"),
+	body("email").optional().isEmail().withMessage("Email inválido").normalizeEmail(),
+	body("password").optional().isLength({ min: 8 }).withMessage("password debe tener mínimo 8 caracteres"),
 	...optionalFields(),
 	...interestsArrayValidation()
 ];
