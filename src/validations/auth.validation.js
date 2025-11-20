@@ -41,7 +41,9 @@ const registerValidation = [
 	body("username")
 		.trim()
 		.isLength({ min: 1, max: 50 })
-		.withMessage("username es obligatorio (máx 50 caracteres)"),	
+		.withMessage("username es obligatorio (máx 50 caracteres)")
+		.matches(/^[a-zA-Z0-9]+$/)
+		.withMessage("username debe ser alfanumérico"),	
 	body("email")
 		.matches(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
 		.withMessage("El email debe tener un formato válido")
