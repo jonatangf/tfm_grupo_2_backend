@@ -52,9 +52,9 @@ const MUTABLE_FIELDS = [
 	"status"
 ];
 
-const listTrips = async ({ limit, offset }) => {
-	log("Listing trips", { limit, offset });
-	const trips = await findAll({ limit, offset });
+const listTrips = async () => {
+	log("Listing trips");
+	const trips = await findAll();
 	log("Trips listed", { count: trips.length });
 	return trips;
 };

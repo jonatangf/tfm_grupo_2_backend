@@ -21,12 +21,10 @@ const handleValidation = (req) => {
 
 const tripsController = {
 	list: async (req, res) => {
-		const limit = Number(req.query.limit || 50);
-		const offset = Number(req.query.offset || 0);
-		log("List requested", { limit, offset });
-		const data = await listTrips({ limit, offset });
+		log("List requested");
+		const data = await listTrips();
 		const camelData = keysToCamel(data);
-		res.json({ data: camelData, limit, offset });
+		res.json(camelData);
 	},
 
 	get: async (req, res) => {

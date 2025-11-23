@@ -9,9 +9,9 @@ const {
 
 const log = (...args) => console.log("[CountriesService]", ...args);
 
-const listCountries = async ({ limit, offset }) => {
-	log("Listing countries", { limit, offset });
-	const countries = await findAll({ limit, offset });
+const listCountries = async () => {
+	log("Listing countries");
+	const countries = await findAll();
 	log("Countries listed", { count: countries.length });
 	return countries;
 };
