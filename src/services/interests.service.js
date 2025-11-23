@@ -18,8 +18,8 @@ const attachUsersToInterests = async (interests) => {
 	}));
 };
 
-const listInterests = async ({ limit, offset }) => {
-	const interests = await findAll({ limit, offset });
+const listInterests = async () => {
+	const interests = await findAll();
 	return attachUsersToInterests(interests);
 };
 

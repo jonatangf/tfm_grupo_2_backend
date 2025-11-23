@@ -18,10 +18,8 @@ const handleValidation = (req) => {
 
 const interestsController = {
 	list: async (req, res) => {
-		const limit = Number(req.query.limit || 50);
-		const offset = Number(req.query.offset || 0);
-		const data = await listInterests({ limit, offset });
-		res.json({ data, limit, offset });
+		const data = await listInterests();
+		res.json(data);
 	},
 
 	get: async (req, res) => {

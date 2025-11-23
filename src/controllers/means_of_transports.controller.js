@@ -20,11 +20,9 @@ const handleValidation = (req) => {
 
 const meansOfTransportsController = {
 	list: async (req, res) => {
-		const limit = Number(req.query.limit || 50);
-		const offset = Number(req.query.offset || 0);
-		log("List requested", { limit, offset });
-		const data = await listMeansOfTransports({ limit, offset });
-		res.json({ data, limit, offset });
+		log("List requested");
+		const data = await listMeansOfTransports();
+		res.json(data);
 	},
 
 	get: async (req, res) => {

@@ -10,13 +10,11 @@ const columns = [
 	"updated_at"
 ].join(", ");
 
-const findAll = async ({ limit = 50, offset = 0 } = {}) => {
+const findAll = async () => {
 	const [rows] = await db.query(
 		`SELECT ${columns}
      FROM messages
-     ORDER BY id DESC
-     LIMIT ? OFFSET ?`,
-		[Number(limit), Number(offset)]
+     ORDER BY id DESC`
 	);
 	return rows;
 };

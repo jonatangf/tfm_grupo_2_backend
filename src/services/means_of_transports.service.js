@@ -9,9 +9,9 @@ const {
 
 const log = (...args) => console.log("[means_of_transports]", ...args);
 
-const listMeansOfTransports = async ({ limit, offset }) => {
-	log("Listing transports", { limit, offset });
-	const data = await findAll({ limit, offset });
+const listMeansOfTransports = async () => {
+	log("Listing transports");
+	const data = await findAll();
 	log("Transports listed", { count: data.length });
 	return data;
 };

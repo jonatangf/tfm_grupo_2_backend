@@ -21,9 +21,9 @@ const pickFields = (payload, keys) => {
 	return result;
 };
 
-const listMessages = async ({ limit, offset }) => {
-	log("Listing messages", { limit, offset });
-	const data = await findAll({ limit, offset });
+const listMessages = async () => {
+	log("Listing messages");
+	const data = await findAll();
 	log("Messages listed", { count: data.length });
 	return data;
 };

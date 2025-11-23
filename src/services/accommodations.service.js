@@ -9,9 +9,9 @@ const {
 
 const log = (...args) => console.log("[AccommodationsService]", ...args);
 
-const listAccommodations = async ({ limit, offset }) => {
-	log("Listing accommodations", { limit, offset });
-	const data = await findAll({ limit, offset });
+const listAccommodations = async () => {
+	log("Listing accommodations");
+	const data = await findAll();
 	log("Accommodations listed", { count: data.length });
 	return data;
 };

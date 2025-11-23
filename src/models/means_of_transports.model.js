@@ -2,13 +2,11 @@ const db = require("../config/db");
 
 const columns = ["id", "name"].join(", ");
 
-const findAll = async ({ limit = 50, offset = 0 } = {}) => {
+const findAll = async () => {
 	const [rows] = await db.query(
 		`SELECT ${columns}
      FROM means_of_transports
-     ORDER BY id DESC
-     LIMIT ? OFFSET ?`,
-		[Number(limit), Number(offset)]
+     ORDER BY id DESC`
 	);
 	return rows;
 };
