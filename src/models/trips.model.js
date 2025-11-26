@@ -20,11 +20,38 @@ const columns = [
 	"updated_at"
 ].join(", ");
 
-const findAll = async () => {
+const findAll = async (filters = {}) => {
+	const conditions = [];
+	const params = [];
+
+	if (filters.destination) {
+		conditions.push("destiny_place LIKE ?");
+		params.push(`%${filters.destination}%`);
+	}
+
+	if (filters.startDate) {
+		conditions.push("start_date >= ?");
+		params.push(filters.startDate);
+	}
+
+	if (filters.endDate) {
+		conditions.push("end_date <= ?");
+		params.push(filters.endDate);
+	}
+
+	if (filters.price) {
+		conditions.push("cost_per_person <= ?");
+		params.push(filters.price);
+	}
+
+	const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
 	const [rows] = await db.query(
 		`SELECT ${columns}
      FROM trips
-     ORDER BY id DESC`
+     ${whereClause}
+     ORDER BY id DESC`,
+		params
 	);
 	return rows;
 };

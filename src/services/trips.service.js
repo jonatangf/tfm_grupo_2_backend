@@ -52,9 +52,9 @@ const MUTABLE_FIELDS = [
 	"status"
 ];
 
-const listTrips = async () => {
-	log("Listing trips");
-	const trips = await findAll();
+const listTrips = async (filters = {}) => {
+	log("Listing trips", { filters });
+	const trips = await findAll(filters);
 	log("Trips listed", { count: trips.length });
 	return trips;
 };

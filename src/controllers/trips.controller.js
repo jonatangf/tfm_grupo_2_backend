@@ -21,8 +21,16 @@ const handleValidation = (req) => {
 
 const tripsController = {
 	list: async (req, res) => {
-		log("List requested");
-		const data = await listTrips();
+		const { destination, startDate, endDate, price } = req.query;
+		const filters = {};
+
+		if (destination) filters.destination = destination;
+		if (startDate) filters.startDate = startDate;
+		if (endDate) filters.endDate = endDate;
+		if (price) filters.price = Number(price);
+
+		log("List requested", { filters });
+		const data = await listTrips(filters);
 		const camelData = keysToCamel(data);
 		res.json(camelData);
 	},
