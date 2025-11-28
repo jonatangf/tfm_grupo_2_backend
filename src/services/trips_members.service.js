@@ -3,6 +3,7 @@ const {
 	findByIds,
 	findRequestsByTripId,
 	findAcceptedMembersByTripId,
+	findByUserId,
 	insert,
 	update,
 	remove
@@ -161,6 +162,13 @@ const getTripMembers = async (tripId) => {
 	return members;
 };
 
+const getUserTripRequests = async (userId) => {
+	log("Fetching user trip requests", { userId });
+	const requests = await findByUserId(userId);
+	log("User trip requests fetched", { count: requests.length });
+	return requests;
+};
+
 module.exports = {
 	listMembers,
 	getMember,
@@ -171,5 +179,6 @@ module.exports = {
 	getTripRequests,
 	acceptRequest,
 	rejectRequest,
-	getTripMembers
+	getTripMembers,
+	getUserTripRequests
 };

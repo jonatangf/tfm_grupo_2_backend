@@ -4,7 +4,8 @@ const {
 	getTripRequests,
 	acceptRequest,
 	rejectRequest,
-	getTripMembers
+	getTripMembers,
+	getUserTripRequests
 } = require("../services/trips_members.service");
 
 const log = (...args) => console.log("[TripsMembersController]", ...args);
@@ -71,6 +72,19 @@ const tripsMembersController = {
 
 		const members = await getTripMembers(tripId);
 		res.json(members);
+	},
+
+	listUserTripRequests: async (req, res) => {
+		const userId = req.user?.userId;
+		if (!userId) {
+			const err = new Error("Usuario no autenticado");
+			err.status = 401;
+			throw err;
+		}
+		log("List user trip requests", { userId });
+
+		const requests = await getUserTripRequests(userId);
+		res.json(requests);
 	}
 };
 

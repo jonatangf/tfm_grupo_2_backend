@@ -1,6 +1,7 @@
 const express = require("express");
 const usersController = require("../controllers/users.controller");
 const reviewsController = require("../controllers/reviews.controller");
+const tripsMembersController = require("../controllers/trips_members.controller");
 const { asyncHandler } = require("../middlewares/asyncHandler");
 const authenticateToken = require("../middlewares/authenticateToken");
 const {
@@ -17,6 +18,7 @@ router.get("/:userId/score", idParamValidation, asyncHandler(usersController.get
 router.get("/:userId", idParamValidation, asyncHandler(usersController.get));
 
 // Protected routes (require authentication)
+router.get("/me/trip-requests", authenticateToken, asyncHandler(tripsMembersController.listUserTripRequests));
 router.put("/:userId", authenticateToken, updateUserValidation, asyncHandler(usersController.update));
 router.patch("/:userId", authenticateToken, updateUserValidation, asyncHandler(usersController.update));
 

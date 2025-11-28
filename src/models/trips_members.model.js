@@ -54,6 +54,26 @@ const findAcceptedMembersByTripId = async (tripId) => {
 	return rows;
 };
 
+const findByUserId = async (userId) => {
+	const [rows] = await db.query(
+		`SELECT
+			tm.trips_id as tripId,
+			t.name as tripName,
+			t.origin,
+			t.destination,
+			t.start_date as startDate,
+			t.end_date as endDate,
+			tm.status,
+			tm.created_at as requestedAt
+		FROM trips_members tm
+		INNER JOIN trips t ON tm.trips_id = t.id
+		WHERE tm.users_id = ?
+		ORDER BY tm.created_at DESC`,
+		[userId]
+	);
+	return rows;
+};
+
 const insert = async ({ users_id, trips_id, status = "pending" }) => {
 	await db.query(
 		"INSERT INTO trips_members (users_id, trips_id, status) VALUES (?, ?, ?)",
@@ -88,6 +108,7 @@ module.exports = {
 	findByIds,
 	findRequestsByTripId,
 	findAcceptedMembersByTripId,
+	findByUserId,
 	insert,
 	update,
 	remove
