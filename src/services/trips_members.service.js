@@ -99,9 +99,22 @@ const createJoinRequest = async (userId, tripId) => {
 
 	const existing = await findByIds(userId, tripId);
 	if (existing) {
-		const err = new Error("Ya has solicitado unirte a este viaje");
-		err.status = 409;
-		throw err;
+		if (existing.status === "accepted") {
+			const err = new Error("Ya eres miembro de este viaje");
+			err.status = 409;
+			throw err;
+		}
+		if (existing.status === "pending") {
+			const err = new Error("Ya tienes una solicitud pendiente para este viaje");
+			err.status = 409;
+			throw err;
+		}
+		// If rejected, allow to request again by updating the status
+		if (existing.status === "rejected") {
+			await update(userId, tripId, { status: "pending" });
+			log("Join request recreated after rejection", { userId, tripId });
+			return { success: true, requestId: userId };
+		}
 	}
 
 	await insert({ users_id: userId, trips_id: tripId, status: "pending" });
