@@ -59,8 +59,8 @@ const findByUserId = async (userId) => {
 		`SELECT
 			tm.trips_id as tripId,
 			t.name as tripName,
-			t.origin,
-			t.destination,
+			t.destiny_place as destination,
+			t.destiny_country_id as destinyCountryId,
 			t.start_date as startDate,
 			t.end_date as endDate,
 			tm.status,
