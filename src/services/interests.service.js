@@ -89,14 +89,11 @@ const deleteInterest = async (id) => {
 
 const getUserInterests = async (userId) => {
 	const interests = await findInterestsByUserId(userId);
-	return interests.map(interest => ({ [interest.id]: interest.name }));
+	return interests;
 };
 
 const setUserInterests = async (userId, interests) => {
-	const interestIds = interests.map(item => {
-		const id = Object.keys(item)[0];
-		return Number(id);
-	});
+	const interestIds = interests.map(item => item.id);
 	await replaceUserInterests(userId, interestIds);
 	return { success: true };
 };

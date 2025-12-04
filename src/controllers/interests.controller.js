@@ -21,8 +21,7 @@ const handleValidation = (req) => {
 const interestsController = {
 	list: async (req, res) => {
 		const data = await listInterests();
-		const formatted = data.map(interest => ({ [interest.id]: interest.name }));
-		res.json(formatted);
+		res.json(data);
 	},
 
 	get: async (req, res) => {

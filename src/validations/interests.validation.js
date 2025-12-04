@@ -23,7 +23,15 @@ const userIdParamValidation = [param("userId").isInt({ min: 1 }).withMessage("us
 
 const setUserInterestsValidation = [
 	param("userId").isInt({ min: 1 }).withMessage("userId debe ser entero positivo"),
-	body().isArray().withMessage("Body debe ser un array de intereses")
+	body().isArray().withMessage("Body debe ser un array de intereses"),
+	body("*.id")
+		.isInt({ min: 1 })
+		.withMessage("Cada interés debe tener un id entero positivo")
+		.toInt(),
+	body("*.name")
+		.optional()
+		.isString()
+		.withMessage("name debe ser texto si se proporciona")
 ];
 
 module.exports = {

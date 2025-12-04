@@ -6,7 +6,7 @@ const findAll = async () => {
 	const [rows] = await db.query(
 		`SELECT ${columns}
      FROM interests
-     ORDER BY id DESC`
+     ORDER BY name ASC`
 	);
 	return rows;
 };
