@@ -1,17 +1,33 @@
 {
-  "name": "trips-api",
-  "version": "1.0.0",
-  "description": "",
+  "name": "express-init-template",
+  "version": "1.5.0",
+  "description": "This is a basic Express application template designed to help you create APIs quickly. It includes essential configurations and setup for starting an Express server.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "lint": "biome lint",
+    "format": "biome check --write"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "keywords": [
+    "express",
+    "init",
+    "template"
+  ],
+  "author": "Mario Girón Martín",
+  "license": "MIT",
   "dependencies": {
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0"
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^5.0.0",
+    "express-validator": "^7.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.15.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@types/express": "^5.0.0",
+    "nodemon": "^3.0.1"
   }
 }

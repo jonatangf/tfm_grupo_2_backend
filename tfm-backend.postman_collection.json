@@ -1,0 +1,1279 @@
+{
+	"info": {
+		"_postman_id": "44d7f481-4678-409c-8076-2d1586eca6ff",
+		"name": "tfm-backend",
+		"description": "API endpoints for TFM Backend - Updated with authentication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25525652"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Auto-save userId from response",
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.userId) {",
+									"        pm.collectionVariables.set(\"user_id\", jsonData.userId);",
+									"        console.log(\"User ID saved: \" + jsonData.userId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Javier\",\n  \"lastname\": \"Andrade\",\n  \"email\": \"javier.andrade@viajeros.com\",\n  \"password\": \"ContraseñaFuerte@2025\",\n  \"countries_id\": 1,\n  \"interests\": [2],\n  \"photo\": \"https://example.com/uploads/users/javier.jpg\",\n  \"birthdate\": \"1990-03-15\",\n  \"description\": \"Apasionado por la naturaleza, los viajes de montaña y la fotografía.\",\n  \"telephone\": \"+593987654321\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user. Returns {success: true, userId: 123}"
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Auto-save token from response",
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.token) {",
+									"        pm.collectionVariables.set(\"auth_token\", jsonData.token);",
+									"        console.log(\"Token saved successfully\");",
+									"    }",
+									"    if (jsonData.userId) {",
+									"        pm.collectionVariables.set(\"user_id\", jsonData.userId);",
+									"        console.log(\"User ID saved: \" + jsonData.userId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"javier.andrade@viajeros.com\",\n  \"password\": \"ContraseñaFuerte@2025\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with email and password. Returns {token: \"...\", userId: 123}"
+					},
+					"response": []
+				}
+			],
+			"description": "Public authentication endpoints (no token required)"
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": "Get user profile by ID. Requires authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "getScore",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/score",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"score"
+							]
+						},
+						"description": "Get user's average score. Returns {averageScore: 4.5}"
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Javier Updated\",\n  \"interests\": [1, 2, 3],\n  \"photo\": \"https://example.com/new-photo.jpg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": "Update user profile. Returns {success: true}"
+					},
+					"response": []
+				}
+			],
+			"description": "User endpoints (require authentication)",
+			"auth": {
+				"type": "inherit"
+			}
+		},
+		{
+			"name": "interests",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/interests/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"interests",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/interests/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"interests",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Nuevo Interés\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/interests/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"interests",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Interés Actualizado\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/interests/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"interests",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/interests/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"interests",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "inherit"
+			}
+		},
+		{
+			"name": "countries",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/countries/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"countries",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/countries/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"countries",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Rusia\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/countries/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"countries",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Francia\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/countries/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"countries",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/countries/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"countries",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "inherit"
+			}
+		},
+		{
+			"name": "means_of_transports",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/means_of_transports/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"means_of_transports",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/means_of_transports/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"means_of_transports",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Buseta\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/means_of_transports/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"means_of_transports",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Autocar\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/means_of_transports/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"means_of_transports",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/means_of_transports/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"means_of_transports",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "inherit"
+			}
+		},
+		{
+			"name": "accommodations",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/accommodations/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"accommodations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/accommodations/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"accommodations",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Hotel Boutique\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/accommodations/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"accommodations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Resort Todo Incluido\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/accommodations/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"accommodations",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/accommodations/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"accommodations",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "inherit"
+			}
+		},
+		{
+			"name": "trips",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/trips/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"trips",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/trips/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"trips",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Escapada a Cartagena\",\n  \"description\": \"Disfruta de la playa, el casco histórico y la gastronomía caribeña.\",\n  \"destiny_country_id\": 3,\n  \"destiny_place\": \"Cartagena\",\n  \"itinerary\": \"Día 1: Playa Bocagrande. Día 2: Castillo San Felipe. Día 3: Mercado de Bazurto.\",\n  \"means_of_transports_id\": 1,\n  \"start_date\": \"2025-12-15\",\n  \"end_date\": \"2025-12-18\",\n  \"creator_id\": 1,\n  \"accommodations_id\": 3,\n  \"cost_per_person\": 550,\n  \"min_participants\": 4,\n  \"status\": \"open\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/trips/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"trips",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Viaje Actualizado\",\n  \"status\": \"confirmed\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/trips/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"trips",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/trips/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"trips",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "inherit"
+			}
+		},
+		{
+			"name": "messages",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/messages/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"messages",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/messages/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"messages",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Gracias por la invitación, ¿dónde será el punto de encuentro?\",\n  \"users_id\": 2,\n  \"trips_id\": 1,\n  \"messages_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/messages/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"messages",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Mensaje actualizado\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/messages/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"messages",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/messages/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"messages",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "inherit"
+			}
+		},
+		{
+			"name": "trips_members",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/trips_members/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"trips_members",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/trips_members/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"trips_members",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"users_id\": 2,\n  \"trips_id\": 1,\n  \"status\": \"accepted\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/trips_members/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"trips_members",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"rejected\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/trips_members/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"trips_members",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/trips_members/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"trips_members",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "inherit"
+			}
+		},
+		{
+			"name": "reviews",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reviews/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reviews",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reviews/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reviews",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rating\": 5,\n  \"comment\": \"Excelente viaje, muy bien organizado\",\n  \"reviewer_id\": 2,\n  \"reviewed_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/reviews/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reviews",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rating\": 4,\n  \"comment\": \"Buen viaje, algunas mejoras posibles\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/reviews/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reviews",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reviews/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reviews",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "inherit"
+			}
+		}
+	]
+}
