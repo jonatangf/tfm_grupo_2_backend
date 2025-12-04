@@ -20,7 +20,7 @@ const commentsController = {
 	create: async (req, res) => {
 		handleValidation(req);
 		const tripId = Number(req.params.tripId);
-		const userId = req.user.id;
+		const userId = req.user.userId;
 		const { title, message } = req.body;
 
 		const fullMessage = title ? `${title}: ${message}` : message;
@@ -63,7 +63,7 @@ const commentsController = {
 		handleValidation(req);
 		const tripId = Number(req.params.tripId);
 		const commentId = Number(req.params.commentId);
-		const userId = req.user.id;
+		const userId = req.user.userId;
 		const { message } = req.body;
 
 		log("Reply to comment requested", { tripId, commentId, userId });
