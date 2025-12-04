@@ -20,21 +20,21 @@ const handleValidation = (req) => {
 
 const countriesController = {
 	list: async (req, res) => {
-		log("List requested");
+		log("List countries");
 		const data = await listCountries();
 		res.json(data);
 	},
 
 	get: async (req, res) => {
 		const id = Number(req.params.id);
-		log("Get requested", { id });
+		log("Get country", { id });
 		const country = await getCountry(id);
 		res.json(country);
 	},
 
 	create: async (req, res) => {
 		handleValidation(req);
-		log("Create requested", { name: req.body.name });
+		log("Create country", { name: req.body.name });
 		const country = await createCountry({ name: req.body.name });
 		res.status(201).json(country);
 	},
@@ -42,14 +42,14 @@ const countriesController = {
 	update: async (req, res) => {
 		handleValidation(req);
 		const id = Number(req.params.id);
-		log("Update requested", { id });
+		log("Update country", { id });
 		const country = await updateCountry(id, req.body);
 		res.json(country);
 	},
 
 	remove: async (req, res) => {
 		const id = Number(req.params.id);
-		log("Delete requested", { id });
+		log("Delete country", { id });
 		const result = await deleteCountry(id);
 		res.json(result);
 	}

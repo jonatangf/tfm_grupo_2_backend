@@ -20,21 +20,21 @@ const handleValidation = (req) => {
 
 const meansOfTransportsController = {
 	list: async (req, res) => {
-		log("List requested");
+		log("List transports");
 		const data = await listMeansOfTransports();
 		res.json(data);
 	},
 
 	get: async (req, res) => {
 		const id = Number(req.params.id);
-		log("Get requested", { id });
+		log("Get transport", { id });
 		const transport = await getMeansOfTransport(id);
 		res.json(transport);
 	},
 
 	create: async (req, res) => {
 		handleValidation(req);
-		log("Create requested", { name: req.body.name });
+		log("Create transport", { name: req.body.name });
 		const transport = await createMeansOfTransport({ name: req.body.name });
 		res.status(201).json(transport);
 	},
@@ -42,14 +42,14 @@ const meansOfTransportsController = {
 	update: async (req, res) => {
 		handleValidation(req);
 		const id = Number(req.params.id);
-		log("Update requested", { id });
+		log("Update transport", { id });
 		const transport = await updateMeansOfTransport(id, req.body);
 		res.json(transport);
 	},
 
 	remove: async (req, res) => {
 		const id = Number(req.params.id);
-		log("Delete requested", { id });
+		log("Delete transport", { id });
 		const result = await deleteMeansOfTransport(id);
 		res.json(result);
 	}

@@ -30,7 +30,7 @@ const tripsMembersController = {
 		}
 
 		const tripId = Number(req.params.tripId);
-		log("Join request", { userId, tripId });
+		log("Create trip join request", { userId, tripId });
 
 		const result = await createJoinRequest(userId, tripId);
 		res.status(201).json(result);
@@ -39,7 +39,7 @@ const tripsMembersController = {
 	listRequests: async (req, res) => {
 		handleValidation(req);
 		const tripId = Number(req.params.tripId);
-		log("List requests", { tripId });
+		log("List trip join requests", { tripId });
 
 		const requests = await getTripRequests(tripId);
 		res.json(requests);
@@ -49,7 +49,7 @@ const tripsMembersController = {
 		handleValidation(req);
 		const tripId = Number(req.params.tripId);
 		const requestId = Number(req.params.requestId);
-		log("Accept request", { tripId, requestId });
+		log("Accept trip join request", { tripId, requestId });
 
 		const result = await acceptRequest(tripId, requestId);
 		res.json(result);
@@ -59,7 +59,7 @@ const tripsMembersController = {
 		handleValidation(req);
 		const tripId = Number(req.params.tripId);
 		const requestId = Number(req.params.requestId);
-		log("Reject request", { tripId, requestId });
+		log("Reject trip join request", { tripId, requestId });
 
 		const result = await rejectRequest(tripId, requestId);
 		res.json(result);
@@ -68,7 +68,7 @@ const tripsMembersController = {
 	listMembers: async (req, res) => {
 		handleValidation(req);
 		const tripId = Number(req.params.tripId);
-		log("List members", { tripId });
+		log("List trip members", { tripId });
 
 		const members = await getTripMembers(tripId);
 		res.json(members);

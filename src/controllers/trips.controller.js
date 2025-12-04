@@ -29,7 +29,7 @@ const tripsController = {
 		if (endDate) filters.endDate = endDate;
 		if (price) filters.price = Number(price);
 
-		log("List requested", { filters });
+		log("List trips", { filters });
 		const data = await listTrips(filters);
 		const camelData = keysToCamel(data);
 		res.json(camelData);
@@ -37,7 +37,7 @@ const tripsController = {
 
 	get: async (req, res) => {
 		const id = Number(req.params.tripId);
-		log("Get requested", { id });
+		log("Get trip", { id });
 		const trip = await getTrip(id);
 		const camelTrip = keysToCamel(trip);
 		res.json(camelTrip);
@@ -46,7 +46,7 @@ const tripsController = {
 	create: async (req, res) => {
 		handleValidation(req);
 		const snakeBody = keysToSnake(req.body);
-		log("Create requested", { creator_id: snakeBody.creator_id });
+		log("Create trip", { creator_id: snakeBody.creator_id });
 		const trip = await createTrip(snakeBody);
 		res.status(201).json({
 			success: true,
@@ -58,14 +58,14 @@ const tripsController = {
 		handleValidation(req);
 		const id = Number(req.params.tripId);
 		const snakeBody = keysToSnake(req.body);
-		log("Update requested", { id });
+		log("Update trip", { id });
 		await updateTrip(id, snakeBody);
 		res.json({ success: true });
 	},
 
 	remove: async (req, res) => {
 		const id = Number(req.params.tripId);
-		log("Delete requested", { id });
+		log("Delete trip", { id });
 		await deleteTrip(id);
 		res.json({ success: true });
 	}

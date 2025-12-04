@@ -20,21 +20,21 @@ const handleValidation = (req) => {
 
 const accommodationsController = {
 	list: async (req, res) => {
-		log("List requested");
+		log("List accommodations");
 		const data = await listAccommodations();
 		res.json(data);
 	},
 
 	get: async (req, res) => {
 		const id = Number(req.params.id);
-		log("Get requested", { id });
+		log("Get accommodation", { id });
 		const accommodation = await getAccommodation(id);
 		res.json(accommodation);
 	},
 
 	create: async (req, res) => {
 		handleValidation(req);
-		log("Create requested", { name: req.body.name });
+		log("Create accommodation", { name: req.body.name });
 		const accommodation = await createAccommodation({ name: req.body.name });
 		res.status(201).json(accommodation);
 	},
@@ -42,14 +42,14 @@ const accommodationsController = {
 	update: async (req, res) => {
 		handleValidation(req);
 		const id = Number(req.params.id);
-		log("Update requested", { id });
+		log("Update accommodation", { id });
 		const accommodation = await updateAccommodation(id, req.body);
 		res.json(accommodation);
 	},
 
 	remove: async (req, res) => {
 		const id = Number(req.params.id);
-		log("Delete requested", { id });
+		log("Delete accommodation", { id });
 		const result = await deleteAccommodation(id);
 		res.json(result);
 	}

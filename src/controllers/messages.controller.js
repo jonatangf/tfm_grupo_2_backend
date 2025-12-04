@@ -20,21 +20,21 @@ const handleValidation = (req) => {
 
 const messagesController = {
 	list: async (req, res) => {
-		log("List requested");
+		log("List messages");
 		const data = await listMessages();
 		res.json(data);
 	},
 
 	get: async (req, res) => {
 		const id = Number(req.params.id);
-		log("Get requested", { id });
+		log("Get message", { id });
 		const message = await getMessage(id);
 		res.json(message);
 	},
 
 	create: async (req, res) => {
 		handleValidation(req);
-		log("Create requested", { user: req.body.users_id, trip: req.body.trips_id });
+		log("Create message", { user: req.body.users_id, trip: req.body.trips_id });
 		const message = await createMessage(req.body);
 		res.status(201).json(message);
 	},
@@ -42,14 +42,14 @@ const messagesController = {
 	update: async (req, res) => {
 		handleValidation(req);
 		const id = Number(req.params.id);
-		log("Update requested", { id });
+		log("Update message", { id });
 		const message = await updateMessage(id, req.body);
 		res.json(message);
 	},
 
 	remove: async (req, res) => {
 		const id = Number(req.params.id);
-		log("Delete requested", { id });
+		log("Delete message", { id });
 		const result = await deleteMessage(id);
 		res.json(result);
 	}
