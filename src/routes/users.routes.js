@@ -6,7 +6,8 @@ const { asyncHandler } = require("../middlewares/asyncHandler");
 const authenticateToken = require("../middlewares/authenticateToken");
 const {
 	updateUserValidation,
-	idParamValidation
+	idParamValidation,
+	avatarValidation
 } = require("../validations/users.validation");
 const { getUserReviewsValidation } = require("../validations/reviews.validation");
 
@@ -21,5 +22,6 @@ router.get("/:userId", idParamValidation, asyncHandler(usersController.get));
 router.get("/me/trip-requests", authenticateToken, asyncHandler(tripsMembersController.listUserTripRequests));
 router.put("/:userId", authenticateToken, updateUserValidation, asyncHandler(usersController.update));
 router.patch("/:userId", authenticateToken, updateUserValidation, asyncHandler(usersController.update));
+router.post("/:userId/avatar", authenticateToken, avatarValidation, asyncHandler(usersController.updateAvatar));
 
 module.exports = router;

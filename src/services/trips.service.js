@@ -5,6 +5,10 @@ const {
 	update,
 	remove
 } = require("../models/trips.model");
+const {
+	findParticipantIdsByTripId,
+	findParticipantIdsByTripIds
+} = require("../models/trips_members.model");
 
 const log = (...args) => console.log("[TripsService]", ...args);
 
@@ -55,8 +59,16 @@ const MUTABLE_FIELDS = [
 const listTrips = async (filters = {}) => {
 	log("Listing trips", { filters });
 	const trips = await findAll(filters);
+
+	const tripIds = trips.map(t => t.id);
+	const participantsMap = await findParticipantIdsByTripIds(tripIds);
+	const tripsWithParticipants = trips.map(trip => ({
+		...trip,
+		participants_id: participantsMap[trip.id] || []
+	}));
+
 	log("Trips listed", { count: trips.length });
-	return trips;
+	return tripsWithParticipants;
 };
 
 const getTrip = async (id) => {
@@ -67,7 +79,9 @@ const getTrip = async (id) => {
 		err.status = 404;
 		throw err;
 	}
-	return trip;
+
+	const participantsId = await findParticipantIdsByTripId(id);
+	return { ...trip, participants_id: participantsId };
 };
 
 const createTrip = async (payload) => {

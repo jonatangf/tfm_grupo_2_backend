@@ -22,6 +22,18 @@ const findInterestsByUserIds = async (userIds = []) => {
 	return map;
 };
 
+const findInterestsByUserId = async (userId) => {
+	const [rows] = await db.query(
+		`SELECT i.id, i.name
+     FROM interests_users iu
+     INNER JOIN interests i ON i.id = iu.interests_id
+     WHERE iu.users_id = ?
+     ORDER BY i.name`,
+		[userId]
+	);
+	return rows;
+};
+
 const findUsersByInterestIds = async (interestIds = []) => {
 	if (!interestIds.length) return new Map();
 	const [rows] = await db.query(
@@ -61,6 +73,7 @@ const replaceUserInterests = async (userId, interestIds = []) => {
 
 module.exports = {
 	findInterestsByUserIds,
+	findInterestsByUserId,
 	findUsersByInterestIds,
 	replaceUserInterests
 };

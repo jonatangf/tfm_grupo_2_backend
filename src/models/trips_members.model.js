@@ -54,6 +54,36 @@ const findAcceptedMembersByTripId = async (tripId) => {
 	return rows;
 };
 
+const findParticipantIdsByTripId = async (tripId) => {
+	const [rows] = await db.query(
+		`SELECT users_id
+		FROM trips_members
+		WHERE trips_id = ? AND status = 'accepted'
+		ORDER BY created_at ASC`,
+		[tripId]
+	);
+	return rows.map(row => row.users_id);
+};
+
+const findParticipantIdsByTripIds = async (tripIds) => {
+	if (!tripIds.length) return {};
+	const [rows] = await db.query(
+		`SELECT trips_id, users_id
+		FROM trips_members
+		WHERE trips_id IN (?) AND status = 'accepted'
+		ORDER BY created_at ASC`,
+		[tripIds]
+	);
+	const result = {};
+	for (const tripId of tripIds) {
+		result[tripId] = [];
+	}
+	for (const row of rows) {
+		result[row.trips_id].push(row.users_id);
+	}
+	return result;
+};
+
 const findByUserId = async (userId) => {
 	const [rows] = await db.query(
 		`SELECT
@@ -108,6 +138,8 @@ module.exports = {
 	findByIds,
 	findRequestsByTripId,
 	findAcceptedMembersByTripId,
+	findParticipantIdsByTripId,
+	findParticipantIdsByTripIds,
 	findByUserId,
 	insert,
 	update,

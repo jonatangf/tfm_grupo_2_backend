@@ -59,16 +59,15 @@ const tripsController = {
 		const id = Number(req.params.tripId);
 		const snakeBody = keysToSnake(req.body);
 		log("Update requested", { id });
-		const trip = await updateTrip(id, snakeBody);
-		const camelTrip = keysToCamel(trip);
-		res.json(camelTrip);
+		await updateTrip(id, snakeBody);
+		res.json({ success: true });
 	},
 
 	remove: async (req, res) => {
 		const id = Number(req.params.tripId);
 		log("Delete requested", { id });
-		const result = await deleteTrip(id);
-		res.json(result);
+		await deleteTrip(id);
+		res.json({ success: true });
 	}
 };
 

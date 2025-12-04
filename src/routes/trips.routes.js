@@ -2,6 +2,7 @@ const express = require("express");
 const tripsController = require("../controllers/trips.controller");
 const reviewsController = require("../controllers/reviews.controller");
 const tripsMembersController = require("../controllers/trips_members.controller");
+const commentsController = require("../controllers/comments.controller");
 const { asyncHandler } = require("../middlewares/asyncHandler");
 const authenticateToken = require("../middlewares/authenticateToken");
 const checkTripOwnership = require("../middlewares/checkTripOwnership");
@@ -18,6 +19,11 @@ const {
 	rejectRequestValidation,
 	listMembersValidation
 } = require("../validations/trips_members.validation");
+const {
+	tripIdParamValidation,
+	createCommentValidation,
+	replyCommentValidation
+} = require("../validations/comments.validation");
 
 const router = express.Router();
 
@@ -35,5 +41,9 @@ router.post("/:tripId/requests/:requestId/reject", authenticateToken, checkTripO
 router.get("/:tripId/members", authenticateToken, listMembersValidation, asyncHandler(tripsMembersController.listMembers));
 
 router.post("/:tripId/reviews", authenticateToken, createReviewForTripValidation, asyncHandler(reviewsController.createForTrip));
+
+router.post("/:tripId/comments", authenticateToken, createCommentValidation, asyncHandler(commentsController.create));
+router.get("/:tripId/comments", authenticateToken, tripIdParamValidation, asyncHandler(commentsController.list));
+router.post("/:tripId/comments/:commentId/reply", authenticateToken, replyCommentValidation, asyncHandler(commentsController.reply));
 
 module.exports = router;

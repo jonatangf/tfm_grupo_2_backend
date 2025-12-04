@@ -59,10 +59,45 @@ const remove = async (id) => {
 	return res.affectedRows;
 };
 
+// Comments for trips (contract format)
+const findCommentsByTripId = async (tripId) => {
+	const [rows] = await db.query(
+		`SELECT
+			m.id as commentId,
+			u.username as user,
+			m.message as title,
+			m.message,
+			m.messages_id as parentId
+		FROM messages m
+		INNER JOIN users u ON m.users_id = u.id
+		WHERE m.trips_id = ? AND m.messages_id IS NULL
+		ORDER BY m.created_at DESC`,
+		[tripId]
+	);
+	return rows;
+};
+
+const findRepliesByCommentId = async (commentId) => {
+	const [rows] = await db.query(
+		`SELECT
+			m.id as commentId,
+			u.username as user,
+			m.message
+		FROM messages m
+		INNER JOIN users u ON m.users_id = u.id
+		WHERE m.messages_id = ?
+		ORDER BY m.created_at ASC`,
+		[commentId]
+	);
+	return rows;
+};
+
 module.exports = {
 	findAll,
 	findById,
 	insert,
 	update,
-	remove
+	remove,
+	findCommentsByTripId,
+	findRepliesByCommentId
 };

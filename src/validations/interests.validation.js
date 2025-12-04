@@ -19,8 +19,17 @@ const updateInterestValidation = [
 
 const idParamValidation = [param("id").isInt({ min: 1 }).withMessage("id debe ser entero positivo")];
 
+const userIdParamValidation = [param("userId").isInt({ min: 1 }).withMessage("userId debe ser entero positivo")];
+
+const setUserInterestsValidation = [
+	param("userId").isInt({ min: 1 }).withMessage("userId debe ser entero positivo"),
+	body().isArray().withMessage("Body debe ser un array de intereses")
+];
+
 module.exports = {
 	createInterestValidation,
 	updateInterestValidation,
-	idParamValidation
+	idParamValidation,
+	userIdParamValidation,
+	setUserInterestsValidation
 };

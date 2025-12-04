@@ -6,7 +6,11 @@ const {
 	update,
 	remove
 } = require("../models/interests.model");
-const { findUsersByInterestIds } = require("../models/interestsUsers.model");
+const {
+	findUsersByInterestIds,
+	findInterestsByUserId,
+	replaceUserInterests
+} = require("../models/interestsUsers.model");
 
 const attachUsersToInterests = async (interests) => {
 	if (!interests.length) return interests;
@@ -83,10 +87,26 @@ const deleteInterest = async (id) => {
 	return { deleted: true };
 };
 
+const getUserInterests = async (userId) => {
+	const interests = await findInterestsByUserId(userId);
+	return interests.map(interest => ({ [interest.id]: interest.name }));
+};
+
+const setUserInterests = async (userId, interests) => {
+	const interestIds = interests.map(item => {
+		const id = Object.keys(item)[0];
+		return Number(id);
+	});
+	await replaceUserInterests(userId, interestIds);
+	return { success: true };
+};
+
 module.exports = {
 	listInterests,
 	getInterest,
 	createInterest,
 	updateInterest,
-	deleteInterest
+	deleteInterest,
+	getUserInterests,
+	setUserInterests
 };

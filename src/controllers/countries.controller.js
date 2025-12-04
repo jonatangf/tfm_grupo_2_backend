@@ -22,7 +22,8 @@ const countriesController = {
 	list: async (req, res) => {
 		log("List requested");
 		const data = await listCountries();
-		res.json(data);
+		const formatted = data.map(country => ({ [country.id]: country.name }));
+		res.json(formatted);
 	},
 
 	get: async (req, res) => {

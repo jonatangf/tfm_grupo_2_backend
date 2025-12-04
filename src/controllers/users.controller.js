@@ -36,6 +36,15 @@ const usersController = {
 		log("Get score requested", { id });
 		const user = await getUser(id);
 		res.json({ averageScore: user.avg_rating || 0 });
+	},
+
+	updateAvatar: async (req, res) => {
+		handleValidation(req);
+		const id = Number(req.params.userId);
+		const { avatar } = req.body;
+		log("Update avatar requested", { id });
+		await updateUser(id, { avatar });
+		res.json({ success: true });
 	}
 };
 

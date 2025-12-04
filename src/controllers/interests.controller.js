@@ -4,7 +4,9 @@ const {
 	getInterest,
 	createInterest,
 	updateInterest,
-	deleteInterest
+	deleteInterest,
+	getUserInterests,
+	setUserInterests
 } = require("../services/interests.service");
 
 const handleValidation = (req) => {
@@ -19,7 +21,8 @@ const handleValidation = (req) => {
 const interestsController = {
 	list: async (req, res) => {
 		const data = await listInterests();
-		res.json(data);
+		const formatted = data.map(interest => ({ [interest.id]: interest.name }));
+		res.json(formatted);
 	},
 
 	get: async (req, res) => {
@@ -44,6 +47,21 @@ const interestsController = {
 	remove: async (req, res) => {
 		const id = Number(req.params.id);
 		const result = await deleteInterest(id);
+		res.json(result);
+	},
+
+	getUserInterests: async (req, res) => {
+		handleValidation(req);
+		const userId = Number(req.params.userId);
+		const interests = await getUserInterests(userId);
+		res.json(interests);
+	},
+
+	setUserInterests: async (req, res) => {
+		handleValidation(req);
+		const userId = Number(req.params.userId);
+		const interests = req.body;
+		const result = await setUserInterests(userId, interests);
 		res.json(result);
 	}
 };
