@@ -1,6 +1,6 @@
 const { body, param } = require("express-validator");
 
-const STATUS_VALUES = ["open", "closed", "completed", "cancelled"];
+const STATUS_VALUES = ["open", "closed", "finished", "cancelled"];
 
 const optionalIntField = (field, message) =>
 	body(field)

@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const { createUser } = require("../services/users.service");
 const { loginUser } = require("../services/auth.service");
+const { sendWelcomeEmail } = require("../services/email.service");
 
 const log = (...args) => console.log("[AuthController]", ...args);
 
@@ -36,6 +37,11 @@ const authController = {
 		const user = await createUser(userData);
 
 		log("User registered successfully", { id: user.id });
+
+		sendWelcomeEmail(userData.email, userData.username).catch((err) => {
+			log("Failed to send welcome email", { email: userData.email, error: err.message });
+		});
+
 		res.status(201).json({
 			success: true,
 			userId: user.id

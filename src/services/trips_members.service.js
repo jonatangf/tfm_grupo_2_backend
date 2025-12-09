@@ -9,6 +9,8 @@ const {
 	remove
 } = require("../models/trips_members.model");
 const { findById: findTripById } = require("../models/trips.model");
+const { findById: findUserById } = require("../models/users.model");
+const { sendTripAcceptedEmail } = require("./email.service");
 
 const STATUS_VALUES = ["pending", "accepted", "rejected"];
 
@@ -131,6 +133,12 @@ const getTripRequests = async (tripId) => {
 	return requests;
 };
 
+const formatDate = (date) => {
+	if (!date) return "";
+	const d = new Date(date);
+	return d.toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" });
+};
+
 const acceptRequest = async (tripId, requestId) => {
 	log("Accepting request", { tripId, requestId });
 	const affected = await update(requestId, tripId, { status: "accepted" });
@@ -140,6 +148,22 @@ const acceptRequest = async (tripId, requestId) => {
 		throw err;
 	}
 	log("Request accepted", { tripId, requestId });
+
+	const user = await findUserById(requestId);
+	const trip = await findTripById(tripId);
+
+	if (user && trip) {
+		sendTripAcceptedEmail(user.email, {
+			userName: user.username,
+			tripName: trip.name,
+			startDate: formatDate(trip.start_date),
+			endDate: formatDate(trip.end_date),
+			destination: trip.destiny_place
+		}).catch((err) => {
+			log("Failed to send trip accepted email", { email: user.email, error: err.message });
+		});
+	}
+
 	return { success: true };
 };
 
