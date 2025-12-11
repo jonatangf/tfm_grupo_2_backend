@@ -82,12 +82,7 @@ const updateUserValidation = [
 const idParamValidation = [param("userId").isInt({ min: 1 })];
 
 const avatarValidation = [
-	param("userId").isInt({ min: 1 }).withMessage("userId debe ser entero positivo"),
-	body("avatar")
-		.isURL()
-		.withMessage("avatar debe ser una URL válida")
-		.isLength({ max: 255 })
-		.withMessage("avatar debe tener máximo 255 caracteres")
+	param("userId").isInt({ min: 1 }).withMessage("userId debe ser entero positivo")
 ];
 
 module.exports = {

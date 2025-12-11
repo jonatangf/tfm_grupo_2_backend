@@ -24,7 +24,7 @@ const attachUsersToInterests = async (interests) => {
 
 const listInterests = async () => {
 	const interests = await findAll();
-	return attachUsersToInterests(interests);
+	return interests;
 };
 
 const getInterest = async (id) => {

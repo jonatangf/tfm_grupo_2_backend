@@ -4,6 +4,7 @@ const {
 	updateUser
 } = require("../services/users.service");
 
+const fs = require ('node:fs');
 const log = (...args) => console.log("[UsersController]", ...args);
 
 const handleValidation = (req) => {
@@ -38,13 +39,31 @@ const usersController = {
 		res.json({ averageScore: user.avg_rating || 0 });
 	},
 
-	updateAvatar: async (req, res) => {
+	updateAvatar: async (req, res) => {		
 		handleValidation(req);
-		const id = Number(req.params.userId);
-		const { avatar } = req.body;
-		log("Update user avatar", { id });
-		await updateUser(id, { avatar });
-		res.json({ success: true });
+		const userId = req.user.userId;
+		const extension = req.file.mimetype.split("/")[1];
+		const newFilename = `${userId}.${extension}`;
+		const avatarsDir = 'public/avatars';
+		
+		// Create avatars directory if it doesn't exist
+		if (!fs.existsSync(avatarsDir)) {
+			fs.mkdirSync(avatarsDir, { recursive: true });
+		}
+		
+		// Delete existing avatar files for this user (any extension)
+		const existingFiles = fs.readdirSync(avatarsDir);
+		for (const file of existingFiles) {
+			if (file.startsWith(`${userId}.`)) {
+				fs.unlinkSync(`${avatarsDir}/${file}`);
+			}
+		}
+		
+		fs.renameSync(req.file.path, `${avatarsDir}/${newFilename}`);
+		const avatarUrl = `/avatars/${newFilename}`;
+		log("Update user avatar", { userId, avatarUrl, extension, newFilename });
+		await updateUser(userId, { avatar: avatarUrl });
+		res.json({ success: true, avatar: avatarUrl });
 	}
 };
 
