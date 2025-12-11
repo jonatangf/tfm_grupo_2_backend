@@ -51,6 +51,14 @@ const usersController = {
 			fs.mkdirSync(avatarsDir, { recursive: true });
 		}
 		
+		// Delete existing avatar files for this user (any extension)
+		const existingFiles = fs.readdirSync(avatarsDir);
+		for (const file of existingFiles) {
+			if (file.startsWith(`${userId}.`)) {
+				fs.unlinkSync(`${avatarsDir}/${file}`);
+			}
+		}
+		
 		fs.renameSync(req.file.path, `${avatarsDir}/${newFilename}`);
 		const avatarUrl = `/avatars/${newFilename}`;
 		log("Update user avatar", { userId, avatarUrl, extension, newFilename });
