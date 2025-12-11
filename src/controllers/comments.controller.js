@@ -50,6 +50,7 @@ const commentsController = {
 			const hasTitle = parts.length > 1;
 			return {
 				commentId: c.commentId,
+				userId: c.userId,
 				user: c.user,
 				title: hasTitle ? parts[0] : "",
 				message: hasTitle ? parts.slice(1).join(": ") : c.message

@@ -38,7 +38,7 @@ const findByIds = async (usersId, tripsId, reviewedUserId) => {
 
 const findByReviewedUserId = async (reviewedUserId) => {
 	const [rows] = await db.query(
-		`SELECT r.score, r.title, r.review as comment, u.username as from_user
+		`SELECT r.score, r.title, r.review as comment, u.username as from_user, r.users_id
      FROM reviews r
      INNER JOIN users u ON r.users_id = u.id
      WHERE r.reviewed_user_id = ?

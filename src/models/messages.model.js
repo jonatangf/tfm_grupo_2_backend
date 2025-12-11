@@ -64,6 +64,7 @@ const findCommentsByTripId = async (tripId) => {
 	const [rows] = await db.query(
 		`SELECT
 			m.id as commentId,
+			m.users_id as userId,
 			u.username as user,
 			m.message as title,
 			m.message,
@@ -81,6 +82,7 @@ const findRepliesByCommentId = async (commentId) => {
 	const [rows] = await db.query(
 		`SELECT
 			m.id as commentId,
+			m.users_id as userId,
 			u.username as user,
 			m.message
 		FROM messages m
