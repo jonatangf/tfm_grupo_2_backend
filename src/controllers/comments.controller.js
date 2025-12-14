@@ -2,7 +2,8 @@ const { validationResult } = require("express-validator");
 const {
 	insert,
 	findById,
-	findCommentsByTripId
+	findCommentsByTripId,
+	findRepliesByCommentId
 } = require("../models/messages.model");
 
 const log = (...args) => console.log("[CommentsController]", ...args);
@@ -84,6 +85,24 @@ const commentsController = {
 		});
 
 		res.json({ success: true });
+	},
+
+	listReplies: async (req, res) => {
+		handleValidation(req);
+		const commentId = Number(req.params.commentId);
+
+		log("List replies requested", { commentId });
+
+		const parentComment = await findById(commentId);
+		if (!parentComment) {
+			const err = new Error("Comentario no encontrado");
+			err.status = 404;
+			throw err;
+		}
+
+		const replies = await findRepliesByCommentId(commentId);
+
+		res.json(replies);
 	}
 };
 

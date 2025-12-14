@@ -22,7 +22,8 @@ const {
 const {
 	tripIdParamValidation,
 	createCommentValidation,
-	replyCommentValidation
+	replyCommentValidation,
+	listRepliesValidation
 } = require("../validations/comments.validation");
 
 const router = express.Router();
@@ -45,5 +46,6 @@ router.post("/:tripId/reviews", authenticateToken, createReviewForTripValidation
 router.post("/:tripId/comments", authenticateToken, createCommentValidation, asyncHandler(commentsController.create));
 router.get("/:tripId/comments", authenticateToken, tripIdParamValidation, asyncHandler(commentsController.list));
 router.post("/:tripId/comments/:commentId/reply", authenticateToken, replyCommentValidation, asyncHandler(commentsController.reply));
+router.get("/:tripId/comments/:commentId/replies", authenticateToken, listRepliesValidation, asyncHandler(commentsController.listReplies));
 
 module.exports = router;

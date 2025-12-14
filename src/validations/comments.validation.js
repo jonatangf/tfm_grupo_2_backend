@@ -27,8 +27,14 @@ const replyCommentValidation = [
 		.withMessage("message debe ser texto")
 ];
 
+const listRepliesValidation = [
+	param("tripId").isInt({ min: 1 }).withMessage("tripId debe ser entero positivo"),
+	param("commentId").isInt({ min: 1 }).withMessage("commentId debe ser entero positivo")
+];
+
 module.exports = {
 	tripIdParamValidation,
 	createCommentValidation,
-	replyCommentValidation
+	replyCommentValidation,
+	listRepliesValidation
 };
