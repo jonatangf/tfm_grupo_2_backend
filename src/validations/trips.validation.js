@@ -18,11 +18,11 @@ const optionalDateField = (field) =>
 
 const baseValidations = [
 	body("name")
-		.optional({ nullable: true })
+		.optional({ checkFalsy: true })
 		.trim()
 		.isLength({ min: 1, max: 255 })
 		.withMessage("name debe tener entre 1 y 255 caracteres"),
-	body("description").optional({ nullable: true }).isString().withMessage("description debe ser texto"),
+	body("description").optional({ checkFalsy: true }).isString().withMessage("description debe ser texto"),
 	optionalIntField("destinyCountryId", "destinyCountryId debe ser un entero positivo"),
 	body("destinyPlace")
 		.optional()
@@ -30,11 +30,11 @@ const baseValidations = [
 		.isLength({ min: 1, max: 150 })
 		.withMessage("destinyPlace debe tener entre 1 y 150 caracteres"),
 	body("destinyImage")
-		.optional({ nullable: true })
+		.optional({ checkFalsy: true })
 		.trim()
 		.isLength({ min: 1, max: 500 })
 		.withMessage("destinyImage debe tener entre 1 y 500 caracteres"),
-	body("itinerary").optional({ nullable: true }).isString().withMessage("itinerary debe ser texto"),
+	body("itinerary").optional({ checkFalsy: true }).isString().withMessage("itinerary debe ser texto"),
 	optionalIntField("meansOfTransportsId", "meansOfTransportsId debe ser un entero positivo"),
 	optionalDateField("startDate"),
 	optionalDateField("endDate"),

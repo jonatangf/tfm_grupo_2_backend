@@ -7,7 +7,7 @@ const optionalFields = () => [
 		.withMessage("countries_id debe ser un entero positivo")
 		.toInt(),
 	body("avatar")
-		.optional({ nullable: true })
+		.optional({ checkFalsy: true })
 		.isLength({ min: 1, max: 255 })
 		.withMessage("avatar debe tener entre 1 y 255 caracteres"),
 	body("birthdate")
@@ -16,11 +16,11 @@ const optionalFields = () => [
 		.withMessage("birthdate debe ser una fecha válida")
 		.toDate(),
 	body("description")
-		.optional({ nullable: true })
+		.optional({ checkFalsy: true })
 		.isString()
 		.withMessage("description debe ser un valor de texto"),
 	body("telephone")
-		.optional({ nullable: true })
+		.optional({ checkFalsy: true })
 		.isLength({ min: 1, max: 20 })
 		.withMessage("telephone debe tener entre 1 y 20 caracteres")
 ];
